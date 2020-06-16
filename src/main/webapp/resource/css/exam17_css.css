@@ -1,0 +1,31 @@
+/* 
+선택자 {
+	속성:값;
+	속성:값;
+	...
+}  >> jsp 파일에서 정의할 경우 <style> 태그 안에 작성
+*/
+			
+button {
+	margin-bottom:10px;
+}
+
+#container {
+	margin-bottom:20px;
+	padding:10px;
+	border-top:1px solid black;
+}
+
+#div1 {
+	width:100px;
+	height:100px;
+	border:1px solid red;
+	display:inline-block;
+}
+
+.class1 {
+	width:100px;
+	height:100px;
+	border:1px solid orange;
+	display:inline-block;
+}
