@@ -18,7 +18,7 @@
 		<script>
 			$(function(){
 				// location.hostname : IP(WAS와 MQTT가 같은 곳에서 실행되고 있어야 같은 IP로 쓸 수 있다.)
-				client = new Paho.MQTT.Client(location.hostname, 61614, new Date().getTime.toString());
+				client = new Paho.MQTT.Client(location.hostname, 61614, new Date().getTime().toString());
 				
 				//메시지 도착하면 실행할 콜백함수 지정
 				client.onMessageArrived = onMessageArrived;
@@ -77,7 +77,7 @@
 			function backTire_control(setOrder, setSpeed) {
 				var message = 0;
 				if(setSpeed != undefined) {
-					speed = setSpeed
+					speed = setSpeed;
 				}
 				if(setOrder != '0') {
 					order = setOrder;
@@ -96,6 +96,61 @@
 				message.destinationName = "command/backTire";
 				client.send(message);
 			}
+			var isPressed = false;
+			
+			document.onkeydown = onkeydown_handler;
+			document.onkeyup = onkeyup_handler;
+			function onkeydown_handler(event) {
+				var keycode = event.which || event.keycode;
+				console.log(keycode);
+				var target = {
+						direction: null,
+						pwm: null
+				};
+				
+				if(keycode == 38) {
+					// up
+					target.direction = "forward";
+					target.pwm = 2;
+					speed = 2;
+				} else if(keycode == 40) {
+					// down
+					target.direction = "backward";
+					target.pwm = 2;
+					speed = 2;
+				} else if(keycode == 37) {
+					//left
+				
+					target.direction = "left";
+				} else if(keycode == 39) {
+					//right
+					target.direction = "right";
+				} else if(keycode == 32) {
+					//spacebar
+					target.direction = "stop";
+					target.pwm = 0;
+				} else if(keycode == null) {
+					target.direction = "front";
+				}
+				console.log(JSON.stringify(target));
+				message = new Paho.MQTT.Message(JSON.stringify(target));
+				message.destinationName = "command/backTire";
+				client.send(message);
+			}
+			
+			function onkeyup_handler() {
+				var target = {
+						direction: null,
+						pwm: speed
+				};
+				
+				target.direction = "front";
+				
+				message = new Paho.MQTT.Message(JSON.stringify(target));
+				message.destinationName = "command/backTire";
+				client.send(message);
+			}
+			
 		</script>
 		<style>
 			div {
@@ -134,6 +189,12 @@
 			<c:forEach var="i" begin="1" end="8">
 				<button onclick="backTire_control('0', '${i}')">${i}</button>
 			</c:forEach>
+		</div>
+		<div id="motor_control" onkeydown="onkeydown_handler()">
+			<a class="btn btn-danger btn-sm" id="up">↑</a>
+			<a class="btn btn-danger btn-sm" id="down">↓</a>
+			<a class="btn btn-danger btn-sm" id="left">←</a>
+			<a class="btn btn-danger btn-sm" id="right">→</a>
 		</div>
 		
 	</body>
