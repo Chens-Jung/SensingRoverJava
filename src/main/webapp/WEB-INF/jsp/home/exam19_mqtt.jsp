@@ -74,14 +74,18 @@
 			}
 			var speed = 0;
 			var order = "stop";
+			var stopped = false;
 			function backTire_control(setOrder, setSpeed) {
 				var message = 0;
 				if(setSpeed != undefined) {
 					speed = setSpeed;
 				}
+				if(stopped == true) {
+					speed = 0;
+					stopped = false;
+				}
 				if(setOrder != '0') {
 					order = setOrder;
-					
 				}
 				if(order == "stop") {
 					speed = 0;
@@ -93,62 +97,66 @@
 				};
 				
 				message = new Paho.MQTT.Message(JSON.stringify(target));
-				message.destinationName = "command/backTire";
+				message.destinationName = "command/backTire/button";
 				client.send(message);
 			}
 			var isPressed = false;
 			
 			document.onkeydown = onkeydown_handler;
 			document.onkeyup = onkeyup_handler;
+			
 			function onkeydown_handler(event) {
 				var keycode = event.which || event.keycode;
 				console.log(keycode);
-				var target = {
-						direction: null,
-						pwm: null
-				};
-				
-				if(keycode == 38) {
-					// up
-					target.direction = "forward";
-					target.pwm = 2;
-					speed = 2;
-				} else if(keycode == 40) {
-					// down
-					target.direction = "backward";
-					target.pwm = 2;
-					speed = 2;
-				} else if(keycode == 37) {
-					//left
-				
-					target.direction = "left";
-				} else if(keycode == 39) {
-					//right
-					target.direction = "right";
-				} else if(keycode == 32) {
-					//spacebar
-					target.direction = "stop";
-					target.pwm = 0;
-				} else if(keycode == null) {
-					target.direction = "front";
+				if(keycode == 37 || keycode == 39) {
+					if(keycode == 37) {
+						//left
+						var topic = "command/frontTire/left";
+						console.log(topic);
+					}else if(keycode == 39) {
+						//right
+						topic = "command/frontTire/right";
+						console.log(topic);
+					}
+					message = new Paho.MQTT.Message("frontTire");
+					message.destinationName = topic;
+					client.send(message);
 				}
-				console.log(JSON.stringify(target));
-				message = new Paho.MQTT.Message(JSON.stringify(target));
-				message.destinationName = "command/backTire";
-				client.send(message);
+				if(keycode == 38 || keycode == 40 || keycode == 32) {
+					if(keycode == 38) {
+						// up
+						var topic = "command/backTire/forward";
+					} else if(keycode == 40) {
+						// down
+						var topic = "command/backTire/backward";
+					} else if(keycode == 32) {
+						//spacebar
+						stopped = true;
+						var topic = "command/backTire/stop";
+					}
+					message = new Paho.MQTT.Message("backTire");
+					message.destinationName = topic;
+					client.send(message);
+				}
+				
+				
 			}
 			
-			function onkeyup_handler() {
-				var target = {
-						direction: null,
-						pwm: speed
-				};
+			function onkeyup_handler(event) {
+				var keycode = event.which || event.keycode;
+				if(keycode == 37 || keycode == 39) {
+					var topic = "command/frontTire/front";
+					message = new Paho.MQTT.Message("frontTire");
+					message.destinationName = topic;
+					client.send(message);
+				}
+				if(keycode == 38 || keycode == 40) {
+					var topic = "command/backTire/respeed";
+					message = new Paho.MQTT.Message("backTire");
+					message.destinationName = topic;
+					client.send(message);
+				}
 				
-				target.direction = "front";
-				
-				message = new Paho.MQTT.Message(JSON.stringify(target));
-				message.destinationName = "command/backTire";
-				client.send(message);
 			}
 			
 		</script>
