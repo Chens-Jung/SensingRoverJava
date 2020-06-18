@@ -17,12 +17,14 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
 		
 		<script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
-		<script src="http://code.highcharts.com/highcharts.js"></script>
 		
 		<script src="https://code.highcharts.com/highcharts.js"></script>
+		<script src="https://code.highcharts.com/highcharts-more.js"></script>
+		<script src="https://code.highcharts.com/modules/solid-gauge.js"></script>
 		<script src="https://code.highcharts.com/modules/exporting.js"></script>
 		<script src="https://code.highcharts.com/modules/export-data.js"></script>
 		<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+		
 		<link rel="stylesheet" href="${pageContext.request.contextPath}/resource/css/chartcss.css"/>
 		<script>
 			var data = {
@@ -52,7 +54,7 @@
 				client.subscribe("/camerapub");
 				client.subscribe("/sensor");
 			}
-		
+	
 			function onMessageArrived(message) {
 				/* console.log("실행");
 				console.log(message.payloadString); */
@@ -695,11 +697,6 @@
 		</div>
 		
 		<br/><hr />
-		
-		<script src="https://code.highcharts.com/highcharts.js"></script>
-		<script src="https://code.highcharts.com/modules/exporting.js"></script>
-		<script src="https://code.highcharts.com/modules/export-data.js"></script>
-		<script src="https://code.highcharts.com/modules/accessibility.js"></script>
 				
 		<figure class="highcharts-figure">
 		  <div id="container"></div>
@@ -710,12 +707,7 @@
 		
 		<br/><hr />
 		
-		<script src="https://code.highcharts.com/highcharts.js"></script>
-		<script src="https://code.highcharts.com/highcharts-more.js"></script>
-		<script src="https://code.highcharts.com/modules/solid-gauge.js"></script>
-		<script src="https://code.highcharts.com/modules/exporting.js"></script>
-		<script src="https://code.highcharts.com/modules/export-data.js"></script>
-		<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+		
 		
 		<figure class="highcharts-figure">
 		  <div id="container-speed" class="chart-container"></div>
