@@ -16,6 +16,7 @@
 		<script src="${pageContext.request.contextPath}/resource/jquery-ui/jquery-ui.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
 		
+<<<<<<< HEAD
 		<script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
 		<script src="http://code.highcharts.com/highcharts.js"></script>
 		
@@ -24,6 +25,8 @@
 		<script src="https://code.highcharts.com/modules/export-data.js"></script>
 		<script src="https://code.highcharts.com/modules/accessibility.js"></script>
 		<link rel="stylesheet" href="${pageContext.request.contextPath}/resource/css/chartcss.css"/>
+=======
+>>>>>>> branch 'master' of https://github.com/Chens-Jung/SensingRoverJava
 		<script>
 			var data;
 			var jsonMessage;
@@ -46,7 +49,11 @@
 		
 			function onMessageArrived(message) {
 				/* console.log("실행");
+<<<<<<< HEAD
 				console.log(message.payloadStr;ing); */
+=======
+				console.log(message.payloadString); */
+>>>>>>> branch 'master' of https://github.com/Chens-Jung/SensingRoverJava
 				if(message.destinationName == "/camerapub") {
 					var cameraView = $("#cameraView").attr("src", "data:image/jpg;base64," + message.payloadString);
 				}
@@ -55,12 +62,16 @@
 					document.getElementById("p").innerHTML = message.payloadString;
 					var jsonObject = JSON.parse(message.payloadString);
 					document.getElementById("laser_state").innerHTML = "laser_state : " + jsonObject["laseremmiter_state"];
+<<<<<<< HEAD
 					document.getElementById("buzzer_state").innerHTML = "buzzer_state : " + jsonObject["buzzer_state"];
 					document.getElementById("backTire_state").innerHTML = "현재상태 : " + jsonObject["dcMotor_state"];
 					document.getElementById("rgbLed_state").innerHTML = "rgbLed_state : " + jsonObject["rgbLed_state"];
 
 					data = jsonObject;
 					//console.log(data);
+=======
+					document.getElementById("backTire_state").innerHTML = "현재상태 : " + jsonObject["dcMotor_state"];
+>>>>>>> branch 'master' of https://github.com/Chens-Jung/SensingRoverJava
 				}
 				
 			}
@@ -76,6 +87,7 @@
 			    message.destinationName = "command/lcd";
 			    client.send(message);
 			}
+<<<<<<< HEAD
 			function laser_on() {
 				message = new Paho.MQTT.Message("on")
 				message.destinationName = "command/laser/on";
@@ -467,9 +479,121 @@
 			  }
 			}, 2000);
 			});
+=======
+			
+			function laser_on() {
+				message = new Paho.MQTT.Message("on")
+				message.destinationName = "command/laser/on";
+				client.send(message);
+			}
+			
+			function laser_off() {
+				message = new Paho.MQTT.Message("off")
+				message.destinationName = "command/laser/off";
+				client.send(message);
+			}
+			var speed = 0;
+			var order = "stop";
+			var stopped = false;
+			function backTire_control(setOrder, setSpeed) {
+				var message = 0;
+				if(setSpeed != undefined) {
+					speed = setSpeed;
+				}
+				if(stopped == true) {
+					speed = 0;
+					stopped = false;
+				}
+				if(setOrder != '0') {
+					order = setOrder;
+				}
+				if(order == "stop") {
+					speed = 0;
+				}
+				
+				var target = {
+						direction:order,
+						pwm:speed
+				};
+				
+				message = new Paho.MQTT.Message(JSON.stringify(target));
+				message.destinationName = "command/backTire/button";
+				client.send(message);
+			}
+			var isPressed = false;
+			
+			document.onkeydown = onkeydown_handler;
+			document.onkeyup = onkeyup_handler;
+			
+			function onkeydown_handler(event) {
+				var keycode = event.which || event.keycode;
+				console.log(keycode);
+				if(keycode == 37 || keycode == 39) {
+					if(keycode == 37) {
+						//left
+						var topic = "command/frontTire/left";
+						console.log(topic);
+					}else if(keycode == 39) {
+						//right
+						topic = "command/frontTire/right";
+						console.log(topic);
+					}
+					message = new Paho.MQTT.Message("frontTire");
+					message.destinationName = topic;
+					client.send(message);
+				}
+				if(keycode == 38 || keycode == 40 || keycode == 32) {
+					if(keycode == 38) {
+						// up
+						var topic = "command/backTire/forward";
+					} else if(keycode == 40) {
+						// down
+						var topic = "command/backTire/backward";
+					} else if(keycode == 32) {
+						//spacebar
+						stopped = true;
+						var topic = "command/backTire/stop";
+					}
+					message = new Paho.MQTT.Message("backTire");
+					message.destinationName = topic;
+					client.send(message);
+				}
+				
+				
+			}
+			
+			function onkeyup_handler(event) {
+				var keycode = event.which || event.keycode;
+				if(keycode == 37 || keycode == 39) {
+					var topic = "command/frontTire/front";
+					message = new Paho.MQTT.Message("frontTire");
+					message.destinationName = topic;
+					client.send(message);
+				}
+				if(keycode == 38 || keycode == 40) {
+					var topic = "command/backTire/respeed";
+					message = new Paho.MQTT.Message("backTire");
+					message.destinationName = topic;
+					client.send(message);
+				}
+				
+			}
+>>>>>>> branch 'master' of https://github.com/Chens-Jung/SensingRoverJava
 			
 		</script>
+<<<<<<< HEAD
 		
+=======
+		<style>
+			div {
+				"width:400px;
+				height:110px;
+				background-color:gray;
+				margin:15px;
+				float:left;"
+			}
+		</style>
+>>>>>>> branch 'master' of https://github.com/Chens-Jung/SensingRoverJava
 	</head>
 	<body>
 	
@@ -490,6 +614,7 @@
 			<button onclick="laser_off()">OFF</button>
 		</div>
 		
+<<<<<<< HEAD
 		<div id="buzzer" align="center">
 			<h3>buzzer</h3>
 			<h6 id="buzzer_state">buzzer_state : </h6>
@@ -553,6 +678,24 @@
 		    	게이지
 		  </p>
 		</figure>
+=======
+		<div id="backTire" align="center">
+			<h3>BackTire 장치 제어</h3>
+			<h6 id="backTire_state">현재 상태 : </h6>
+			<button onclick="backTire_control('forward')">전진</button>
+			<button onclick="backTire_control('stop')">정지</button>
+			<button onclick="backTire_control('backward')">후진</button> <br/>
+			<c:forEach var="i" begin="1" end="8">
+				<button onclick="backTire_control('0', '${i}')">${i}</button>
+			</c:forEach>
+		</div>
+		<div id="motor_control" onkeydown="onkeydown_handler()">
+			<a class="btn btn-danger btn-sm" id="up">↑</a>
+			<a class="btn btn-danger btn-sm" id="down">↓</a>
+			<a class="btn btn-danger btn-sm" id="left">←</a>
+			<a class="btn btn-danger btn-sm" id="right">→</a>
+		</div>
+>>>>>>> branch 'master' of https://github.com/Chens-Jung/SensingRoverJava
 		
 	</body>
 </html>
