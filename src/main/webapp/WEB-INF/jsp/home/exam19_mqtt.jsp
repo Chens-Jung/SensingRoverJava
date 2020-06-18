@@ -25,8 +25,17 @@
 		<script src="https://code.highcharts.com/modules/accessibility.js"></script>
 		<link rel="stylesheet" href="${pageContext.request.contextPath}/resource/css/chartcss.css"/>
 		<script>
-			var data;
-			var jsonMessage;
+			var data = {
+					gas:0,
+					photoresistor:0,
+					thermistor:0,
+					ultrasonic:0,
+					tracking:0
+			};
+			var jsonMessage = {};
+
+			/* var data;
+			var jsonMessage; */
 			$(function(){
 				// location.hostname : IP(WAS와 MQTT가 같은 곳에서 실행되고 있어야 같은 IP로 쓸 수 있다.)
 				client = new Paho.MQTT.Client(location.hostname, 61614, new Date().getTime().toString());
@@ -63,6 +72,21 @@
 					//console.log(data);
 					document.getElementById("backTire_state").innerHTML = "현재상태 : " + jsonObject["dcMotor_state"];
 				}
+				
+				var x = (new Date()).getTime();
+				console.log("x:", x);
+
+				var y1 = data.gas;
+				var point1 = [x, y1]
+				var series = chart1.series[0];
+				var shift = series.data.length > 20;
+				chart1.series[0].addPoint(point1, true, shift);
+
+				var y2 = data.thermistor;
+				var point2 = [x, y2]
+				var series = chart2.series[0];
+				var shift = series.data.length > 20;
+				chart2.series[0].addPoint(point2, true, shift);
 				
 			}
 			function fun1() {
@@ -163,6 +187,41 @@
 				message = new Paho.MQTT.Message("off")
 				message.destinationName = "command/rgbLed/off";
 				client.send(message);
+			}
+			function dist(ang){
+				if(ang == "0"){
+					message = new Paho.MQTT.Message("0")
+					message.destinationName = "command/dist/0";
+					client.send(message);
+				}
+				else if(ang == "90"){
+					message = new Paho.MQTT.Message("90")
+					message.destinationName = "command/dist/90";
+					client.send(message);
+				}
+				else if(ang == "180"){
+					message = new Paho.MQTT.Message("180")
+					message.destinationName = "command/dist/180";
+					client.send(message);
+				}
+			}
+
+			function moterx(ang){
+				if(ang == "0"){
+					message = new Paho.MQTT.Message("0")
+					message.destinationName = "command/moterx/0";
+					client.send(message);
+				}
+				else if(ang == "90"){
+					message = new Paho.MQTT.Message("90")
+					message.destinationName = "command/moterx/90";
+					client.send(message);
+				}
+				else if(ang == "180"){
+					message = new Paho.MQTT.Message("180")
+					message.destinationName = "command/moterx/180";
+					client.send(message);
+				}
 			}
 			// -----------------------------------------------------차트
 			$(function fun2() {
@@ -621,6 +680,20 @@
 			<a class="btn btn-danger btn-sm" id="left">←</a>
 			<a class="btn btn-danger btn-sm" id="right">→</a>
 		</div>
+		
+		<div>
+			<button onclick="dist('0')">0도</button>
+			<button onclick="dist('90')">90도</button>
+			<button onclick="dist('180')">180도</button>
+
+		</div>
+
+		<div>
+			<button onclick="moterx('0')">0도</button>
+			<button onclick="moterx('90')">90도</button>
+			<button onclick="moterx('180')">180도</button>
+		</div>
+		
 		<br/><hr />
 		
 		<script src="https://code.highcharts.com/highcharts.js"></script>
@@ -651,6 +724,71 @@
 		    	게이지
 		  </p>
 		</figure>
+		
+		<figure class="highcharts-figure">
+		  <div id="gas" style="margin: 10%" ></div>
+		  <div id="thermistor" style="margin: 10%" ></div>
+
+		</figure>
+		<script>
+			var chart1, chart2, chart3, chart4, chart5;
+			function makeChart() {
+			    chart1 = new Highcharts.Chart({
+			        chart: {
+			            renderTo: "gas",
+			            defaultSeriesType: 'spline'
+			        },
+			        title: {
+			            text: 'Live Gas Data'
+			        },
+			        xAxis: {
+			            type: 'datetime',
+			            tickPixelInterval: 100,
+			            maxZoom: 20 * 1000
+			        },
+			        yAxis: {
+			            minPadding: 0.2,
+			            maxPadding: 0.2,
+			            title: {
+			                text: 'Value',
+			                margin: 80
+			            }
+			        },
+			        series: [{
+			            name: 'Gas data',
+			            data: []
+			        }]
+			    });
+
+			    chart2 = new Highcharts.Chart({
+			        chart: {
+			            renderTo: "thermistor",
+			            defaultSeriesType: 'spline'
+			        },
+			        title: {
+			            text: 'Live Thermistor Data'
+			        },
+			        xAxis: {
+			            type: 'datetime',
+			            tickPixelInterval: 100,
+			            maxZoom: 20 * 1000
+			        },
+			        yAxis: {
+			            minPadding: 0.2,
+			            maxPadding: 0.2,
+			            title: {
+			                text: 'Value',
+			                margin: 80
+			            }
+			        },
+			        series: [{
+			            name: 'Thermistor data',
+			            data: []
+			        }]
+			    });
+			}
+			makeChart(); //차트 불러오기
+		</script>
 		
 	</body>
 </html>
