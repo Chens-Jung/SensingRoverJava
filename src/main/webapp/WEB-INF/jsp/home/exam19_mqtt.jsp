@@ -32,7 +32,8 @@
 					photoresistor:0,
 					thermistor:0,
 					ultrasonic:0,
-					tracking:0
+					tracking:0,
+					dcMotor_speed:0
 			};
 			var jsonMessage = {};
 
@@ -62,6 +63,7 @@
 					var cameraView = $("#cameraView").attr("src", "data:image/jpg;base64," + message.payloadString);
 				}
 				if(message.destinationName == "/sensor") {
+					
 					//console.log(message.payloadString)
 					document.getElementById("p").innerHTML = message.payloadString;
 					var jsonObject = JSON.parse(message.payloadString);
@@ -71,24 +73,24 @@
 					document.getElementById("rgbLed_state").innerHTML = "rgbLed_state : " + jsonObject["rgbLed_state"];
 
 					data = jsonObject;
-					//console.log(data);
+					console.log(data.dcMotor_speed);
 					document.getElementById("backTire_state").innerHTML = "현재상태 : " + jsonObject["dcMotor_state"];
-				}
 				
-				var x = (new Date()).getTime();
-				console.log("x:", x);
+					var x = (new Date()).getTime();
+					console.log("x:", x);
 
-				var y1 = data.gas;
-				var point1 = [x, y1]
-				var series = chart1.series[0];
-				var shift = series.data.length > 20;
-				chart1.series[0].addPoint(point1, true, shift);
+					var y1 = data.gas;
+					var point1 = [x, y1]
+					var series = chart1.series[0];
+					var shift = series.data.length > 20;
+					chart1.series[0].addPoint(point1, true, shift);
 
-				var y2 = data.thermistor;
-				var point2 = [x, y2]
-				var series = chart2.series[0];
-				var shift = series.data.length > 20;
-				chart2.series[0].addPoint(point2, true, shift);
+					var y2 = data.thermistor;
+					var point2 = [x, y2]
+					var series = chart2.series[0];
+					var shift = series.data.length > 20;
+					chart2.series[0].addPoint(point2, true, shift);
+				}
 				
 			}
 			function fun1() {
@@ -225,97 +227,6 @@
 					client.send(message);
 				}
 			}
-			// -----------------------------------------------------차트
-			$(function fun2() {
-				var chart1 = Highcharts.chart('container', {
-					  chart: {
-					    type: 'spline',
-					    animation: Highcharts.svg, // don't animate in old IE
-					    marginRight: 10,
-					    events: {
-					      load: function () {
-	
-					        // set up the updating of the chart each second
-					        var series = this.series[0];
-					        setInterval(function () {
-					          var x = (new Date()).getTime(), 	//현재시간
-					          	y = data.gas;
-					            //y = Math.random();				//값 넣는 곳
-					          series.addPoint([x, y], true, true);
-					        }, 1000);
-					      }
-					    }
-					  },
-	
-					  time: {
-					    useUTC: false
-					  },
-	
-					  title: {
-					    text: 'Gas chart'
-					  },
-	
-					  accessibility: {
-					    announceNewData: {
-					      enabled: true,
-					      minAnnounceInterval: 15000,
-					      announcementFormatter: function (allSeries, newSeries, newPoint) {
-					        if (newPoint) {
-					          return 'New point added. Value: ' + newPoint.y;
-					        }
-					        return false;
-					      }
-					    }
-					  },
-	
-					  xAxis: {
-					    type: 'datetime',
-					    tickPixelInterval: 150
-					  },
-	
-					  yAxis: {
-					    title: {
-					      text: 'Value'
-					    },
-					    plotLines: [{
-					      value: 0,
-					      width: 1,
-					      color: '#808080'
-					    }]
-					  },
-	
-					  tooltip: {
-					    headerFormat: '<b>{series.name}</b><br/>',
-					    pointFormat: '{point.x:%Y-%m-%d %H:%M:%S}<br/>{point.y:.2f}'
-					  },
-	
-					  legend: {
-					    enabled: false
-					  },
-	
-					  exporting: {
-					    enabled: false
-					  },
-	
-					  series: [{
-					    name: '가스 데이터',
-					    data: (function () {
-					      // generate an array of random data
-					      var data = [],
-					        time = (new Date()).getTime(),
-					        i;
-	
-					      for (i = -19; i <= 0; i += 1) {
-					        data.push({
-					          x: time + i * 1000,
-					          y: Math.random()
-					        });
-					      }
-					      return data;
-					    }())
-					  }]
-					});
-			});
 			
 			var isPressed = false;
 			
@@ -440,7 +351,7 @@
 			var chartSpeed = Highcharts.chart('container-speed', Highcharts.merge(gaugeOptions, {
 			  yAxis: {
 			    min: 0,
-			    max: 200,
+			    max: 4000,
 			    title: {
 			      text: 'Speed'
 			    }
@@ -452,7 +363,7 @@
 			
 			  series: [{
 			    name: 'Speed',
-			    data: [80],
+			    data: [0],
 			    dataLabels: {
 			      format:
 			        '<div style="text-align:center">' +
@@ -467,35 +378,6 @@
 			
 			}));
 			
-			// The RPM gauge
-			var chartRpm = Highcharts.chart('container-rpm', Highcharts.merge(gaugeOptions, {
-			  yAxis: {
-			    min: 0,
-			    max: 5,
-			    title: {
-			      text: 'RPM'
-			    }
-			  },
-			
-			  series: [{
-			    name: 'RPM',
-			    data: [1],
-			    dataLabels: {
-			      format:
-			        '<div style="text-align:center">' +
-			        '<span style="font-size:25px">{y:.1f}</span><br/>' +
-			        '<span style="font-size:12px;opacity:0.4">' +
-			        '* 1000 / min' +
-			        '</span>' +
-			        '</div>'
-			    },
-			    tooltip: {
-			      valueSuffix: ' revolutions/min'
-			    }
-			  }]
-			
-			}));
-			
 			// Bring life to the dials
 			setInterval(function () {
 			  // Speed
@@ -505,29 +387,15 @@
 			
 			  if (chartSpeed) {
 			    point = chartSpeed.series[0].points[0];
-			    inc = Math.round((Math.random() - 0.5) * 100);
-			    newVal = point.y + inc;
-			
-			    if (newVal < 0 || newVal > 200) {
-			      newVal = point.y - inc;
+				
+			    var temp_speed = parseInt(data["dcMotor_speed"])
+			    if (temp_speed >= 0 || temp_speed < 4095) {
+			    	point.update(temp_speed);
 			    }
 			
-			    point.update(newVal);
+			    
 			  }
-			
-			  // RPM
-			  if (chartRpm) {
-			    point = chartRpm.series[0].points[0];
-			    inc = Math.random() - 0.5;
-			    newVal = point.y + inc;
-			
-			    if (newVal < 0 || newVal > 5) {
-			      newVal = point.y - inc;
-			    }
-			
-			    point.update(newVal);
-			  }
-			}, 2000);
+			}, 1000);
 			});
 			
 			function laser_on() {
