@@ -73,7 +73,7 @@
 					document.getElementById("rgbLed_state").innerHTML = "rgbLed_state : " + jsonObject["rgbLed_state"];
 
 					data = jsonObject;
-					console.log(data.dcMotor_speed);
+					// console.log(data.dcMotor_speed);
 					document.getElementById("backTire_state").innerHTML = "현재상태 : " + jsonObject["dcMotor_state"];
 				
 					//차트 설정================================================================================
@@ -114,7 +114,7 @@
 				}
 				
 			}
-			function fun1() {
+			function lcd_write() {
 				var lcd0c = $("#lcd0").val()
 				var lcd1c = $("#lcd1").val()
 				var target = {
@@ -216,37 +216,39 @@
 			function dist(ang){
 				if(ang == "0"){
 					message = new Paho.MQTT.Message("0")
-					message.destinationName = "command/dist/0";
+					message.destinationName = "command/dist/left";
 					client.send(message);
 				}
 				else if(ang == "90"){
 					message = new Paho.MQTT.Message("90")
-					message.destinationName = "command/dist/90";
+					message.destinationName = "command/dist/middle";
 					client.send(message);
 				}
 				else if(ang == "180"){
 					message = new Paho.MQTT.Message("180")
-					message.destinationName = "command/dist/180";
+					message.destinationName = "command/dist/right";
 					client.send(message);
 				}
+				console.log(message.destinationName);
 			}
 
 			function moterx(ang){
 				if(ang == "0"){
 					message = new Paho.MQTT.Message("0")
-					message.destinationName = "command/moterx/0";
+					message.destinationName = "command/moterx/left";
 					client.send(message);
 				}
 				else if(ang == "90"){
 					message = new Paho.MQTT.Message("90")
-					message.destinationName = "command/moterx/90";
+					message.destinationName = "command/moterx/middle";
 					client.send(message);
 				}
 				else if(ang == "180"){
 					message = new Paho.MQTT.Message("180")
-					message.destinationName = "command/moterx/180";
+					message.destinationName = "command/moterx/right";
 					client.send(message);
 				}
+				console.log(message.destinationName);
 			}
 			
 			var isPressed = false;
@@ -529,7 +531,7 @@
 			<h3>LCD</h3>
 			lcd0:<input type="text" id="lcd0" size="25"/><br/>
 			lcd1:<input type="text" id="lcd1" size="25"/>
-			<a onclick="fun1()" class="btn btn-success">보내기</a>
+			<a onclick="lcd_write()" class="btn btn-success">보내기</a>
 		</div>
 		<div id="laser" align="center">
 			<h3>laser</h3>
@@ -564,12 +566,6 @@
 			<c:forEach var="i" begin="1" end="8">
 				<button onclick="backTire_control('0', '${i}')">${i}</button>
 			</c:forEach>
-		</div>
-		<div id="motor_control" onkeydown="onkeydown_handler()">
-			<a class="btn btn-danger btn-sm" id="up">↑</a>
-			<a class="btn btn-danger btn-sm" id="down">↓</a>
-			<a class="btn btn-danger btn-sm" id="left">←</a>
-			<a class="btn btn-danger btn-sm" id="right">→</a>
 		</div>
 		
 		<div>
