@@ -36,6 +36,7 @@
 					dcMotor_speed:0
 			};
 			var jsonMessage = {};
+			var pwm = 0;
 
 			/* var data;
 			var jsonMessage; */
@@ -62,6 +63,10 @@
 				if(message.destinationName == "/camerapub") {
 					var cameraView = $("#cameraView").attr("src", "data:image/jpg;base64," + message.payloadString);
 				}
+				if(message.destinationName == "/pwm") {
+					pwm = parseInt(message.payloadString);
+					console.log(pwm);
+				}
 				if(message.destinationName == "/sensor") {
 					
 					//console.log(message.payloadString)
@@ -81,7 +86,6 @@
 					//console.log("x:", x);
 
 					var y1 = data.gas;
-					//var y1 = Math.random();
 					var point1 = [x, y1]
 					var series = chart1.series[0];
 					var shift = series.data.length > 20;
@@ -111,6 +115,11 @@
 					var shift = series.data.length > 20;
 					chart5.series[0].addPoint(point5, true, shift);
 					//차트 설정================================================================================
+					
+					if(data.ultrasonic < 10){
+						buzzer_on();
+						setTimeout(buzzer_off, 300);
+					}
 				}
 				
 			}
@@ -213,43 +222,6 @@
 				message.destinationName = "command/rgbLed/off";
 				client.send(message);
 			}
-			function dist(ang){
-				if(ang == "0"){
-					message = new Paho.MQTT.Message("0")
-					message.destinationName = "command/dist/left";
-					client.send(message);
-				}
-				else if(ang == "90"){
-					message = new Paho.MQTT.Message("90")
-					message.destinationName = "command/dist/middle";
-					client.send(message);
-				}
-				else if(ang == "180"){
-					message = new Paho.MQTT.Message("180")
-					message.destinationName = "command/dist/right";
-					client.send(message);
-				}
-				console.log(message.destinationName);
-			}
-
-			function moterx(ang){
-				if(ang == "0"){
-					message = new Paho.MQTT.Message("0")
-					message.destinationName = "command/moterx/left";
-					client.send(message);
-				}
-				else if(ang == "90"){
-					message = new Paho.MQTT.Message("90")
-					message.destinationName = "command/moterx/middle";
-					client.send(message);
-				}
-				else if(ang == "180"){
-					message = new Paho.MQTT.Message("180")
-					message.destinationName = "command/moterx/right";
-					client.send(message);
-				}
-				console.log(message.destinationName);
-			}
 			
 			var isPressed = false;
 			
@@ -259,6 +231,22 @@
 			function onkeydown_handler(event) {
 				var keycode = event.which || event.keycode;
 				console.log(keycode);
+				if(keycode == 87 || keycode== 65 || keycode== 83 || keycode== 68){		//카메라 제어
+					if(keycode == 83){					//앞
+						console.log(keycode);
+						var topic="command/camera/front";
+					} else if(keycode == 65){			//왼쪽
+						console.log(keycode);
+						var topic="command/camera/left";
+					} else if(keycode == 87){			//뒤
+						var topic="command/camera/back";
+					} else if(keycode == 68){			//오른쪽
+						var topic="command/camera/right";
+					}
+					message = new Paho.MQTT.Message("camera");
+					message.destinationName = topic;
+					client.send(message);
+				}
 				if(keycode == 37 || keycode == 39) {
 					if(keycode == 37) {
 						//left
@@ -289,8 +277,16 @@
 					message.destinationName = topic;
 					client.send(message);
 				}
-				
-				
+				if(keycode == 100 || keycode == 102) {		// 거리 센서 제어
+					if(keycode == 100) {					//좌
+						var topic = "command/distance/left";
+					} else if(keycode == 102) {				//우
+						var topic = "command/distance/right";
+					} 
+					message = new Paho.MQTT.Message("distance");
+					message.destinationName = topic;
+					client.send(message);
+				}
 			}
 			
 			function onkeyup_handler(event) {
@@ -374,7 +370,7 @@
 			var chartSpeed = Highcharts.chart('container-speed', Highcharts.merge(gaugeOptions, {
 			  yAxis: {
 			    min: 0,
-			    max: 4000,
+			    max: 4094,
 			    title: {
 			      text: 'Speed'
 			    }
@@ -404,9 +400,7 @@
 			// Bring life to the dials
 			setInterval(function () {
 			  // Speed
-			  var point,
-			    newVal,
-			    inc;
+			  var point;
 			
 			  if (chartSpeed) {
 			    point = chartSpeed.series[0].points[0];
@@ -420,105 +414,6 @@
 			  }
 			}, 1000);
 			});
-			
-			function laser_on() {
-				message = new Paho.MQTT.Message("on")
-				message.destinationName = "command/laser/on";
-				client.send(message);
-			}
-			
-			function laser_off() {
-				message = new Paho.MQTT.Message("off")
-				message.destinationName = "command/laser/off";
-				client.send(message);
-			}
-			var speed = 0;
-			var order = "stop";
-			var stopped = false;
-			function backTire_control(setOrder, setSpeed) {
-				var message = 0;
-				if(setSpeed != undefined) {
-					speed = setSpeed;
-				}
-				if(stopped == true) {
-					speed = 0;
-					stopped = false;
-				}
-				if(setOrder != '0') {
-					order = setOrder;
-				}
-				if(order == "stop") {
-					speed = 0;
-				}
-				
-				var target = {
-						direction:order,
-						pwm:speed
-				};
-				
-				message = new Paho.MQTT.Message(JSON.stringify(target));
-				message.destinationName = "command/backTire/button";
-				client.send(message);
-			}
-			var isPressed = false;
-			
-			document.onkeydown = onkeydown_handler;
-			document.onkeyup = onkeyup_handler;
-			
-			function onkeydown_handler(event) {
-				var keycode = event.which || event.keycode;
-				console.log(keycode);
-				if(keycode == 37 || keycode == 39) {
-					if(keycode == 37) {
-						//left
-						var topic = "command/frontTire/left";
-						console.log(topic);
-					}else if(keycode == 39) {
-						//right
-						topic = "command/frontTire/right";
-						console.log(topic);
-					}
-					message = new Paho.MQTT.Message("frontTire");
-					message.destinationName = topic;
-					client.send(message);
-				}
-				if(keycode == 38 || keycode == 40 || keycode == 32) {
-					if(keycode == 38) {
-						// up
-						var topic = "command/backTire/forward";
-					} else if(keycode == 40) {
-						// down
-						var topic = "command/backTire/backward";
-					} else if(keycode == 32) {
-						//spacebar
-						stopped = true;
-						var topic = "command/backTire/stop";
-					}
-					message = new Paho.MQTT.Message("backTire");
-					message.destinationName = topic;
-					client.send(message);
-				}
-				
-				
-			}
-			
-			function onkeyup_handler(event) {
-				var keycode = event.which || event.keycode;
-				if(keycode == 37 || keycode == 39) {
-					var topic = "command/frontTire/front";
-					message = new Paho.MQTT.Message("frontTire");
-					message.destinationName = topic;
-					client.send(message);
-				}
-				if(keycode == 38 || keycode == 40) {
-					var topic = "command/backTire/respeed";
-					message = new Paho.MQTT.Message("backTire");
-					message.destinationName = topic;
-					client.send(message);
-				}
-				
-			}
-			
 		</script>
 	</head>
 	<body>
@@ -567,19 +462,23 @@
 				<button onclick="backTire_control('0', '${i}')">${i}</button>
 			</c:forEach>
 		</div>
+		<div id="motor_control" onkeydown="onkeydown_handler()" align="center">
+			<a class="btn btn-danger btn-sm" id="up">↑</a>
+			<a class="btn btn-danger btn-sm" id="down">↓</a>
+			<a class="btn btn-danger btn-sm" id="left">←</a>
+			<a class="btn btn-danger btn-sm" id="right">→</a>
+			
+			<a class="btn btn-danger btn-sm" >카메라 위 W</a>
+			<a class="btn btn-danger btn-sm" >카메라 아래 S</a>
+			<a class="btn btn-danger btn-sm" >카메라 왼쪽 A</a>
+			<a class="btn btn-danger btn-sm" >카메라 오른쪽 D</a>
+			
+			<a class="btn btn-danger btn-sm" >거리센서 왼쪽</a>
+			<a class="btn btn-danger btn-sm" >거리센서 오른쪽</a>
+			
+		</div>
 		
-		<div>
-			<button onclick="dist('0')">0도</button>
-			<button onclick="dist('90')">90도</button>
-			<button onclick="dist('180')">180도</button>
-
-		</div>
-
-		<div>
-			<button onclick="moterx('0')">0도</button>
-			<button onclick="moterx('90')">90도</button>
-			<button onclick="moterx('180')">180도</button>
-		</div>
+		
 		
 		<br/><hr />
 				
@@ -595,9 +494,6 @@
 		</figure>
 		
 		<br/><hr />
-		
-		
-		
 		<figure class="highcharts-figure">
 		  <div id="container-speed" class="chart-container"></div>
 		  <div id="container-rpm" class="chart-container"></div>
