@@ -158,17 +158,7 @@
 				message.destinationName = "command/buzzer/off";
 				client.send(message);
 			}
-			
-			function buzzer_active() {
-				console.log(data.ultrasonic);
-				if(data.ultrasonic < 5.0){
-					console.log(data.ultrasonic);
-					
-					message = new Paho.MQTT.Message("active")
-					message.destinationName = "command/buzzer/active";
-					client.send(message);
-				}
-			}
+
 			var speed = 0;
 			var order = "stop";
 			var stopped = false;
@@ -440,7 +430,6 @@
 			<h6 id="buzzer_state">buzzer_state : </h6>
 			<button onclick="buzzer_on()">ON</button>
 			<button onclick="buzzer_off()">OFF</button>
-			<button onclick="buzzer_active()">ACTIVE</button>
 		</div>
 		
 		<div id="rgbLed" align="center">
