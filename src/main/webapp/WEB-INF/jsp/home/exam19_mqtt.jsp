@@ -76,20 +76,41 @@
 					console.log(data.dcMotor_speed);
 					document.getElementById("backTire_state").innerHTML = "현재상태 : " + jsonObject["dcMotor_state"];
 				
+					//차트 설정================================================================================
 					var x = (new Date()).getTime();
-					console.log("x:", x);
+					//console.log("x:", x);
 
 					var y1 = data.gas;
+					//var y1 = Math.random();
 					var point1 = [x, y1]
 					var series = chart1.series[0];
 					var shift = series.data.length > 20;
 					chart1.series[0].addPoint(point1, true, shift);
 
-					var y2 = data.thermistor;
+					var y2 = parseInt(data.thermistor);
 					var point2 = [x, y2]
 					var series = chart2.series[0];
 					var shift = series.data.length > 20;
 					chart2.series[0].addPoint(point2, true, shift);
+					
+					var y3 = data.photoresistor;
+					var point3 = [x, y3]
+					var series = chart3.series[0];
+					var shift = series.data.length > 20;
+					chart3.series[0].addPoint(point3, true, shift);
+					
+					var y4 = data.ultrasonic;
+					var point4 = [x, y4]
+					var series = chart4.series[0];
+					var shift = series.data.length > 20;
+					chart4.series[0].addPoint(point4, true, shift);
+					
+					var y5 = data.tracking;
+					var point5 = [x, y5]
+					var series = chart5.series[0];
+					var shift = series.data.length > 20;
+					chart5.series[0].addPoint(point5, true, shift);
+					//차트 설정================================================================================
 				}
 				
 			}
@@ -567,7 +588,11 @@
 		<br/><hr />
 				
 		<figure class="highcharts-figure">
-		  <div id="container"></div>
+		  <div id="gas" style="margin: 10%" ></div>
+		  <div id="thermistor" style="margin: 10%" ></div>
+		  <div id="photoresister" style="margin: 10%" ></div>
+		  <div id="ultrasonic" style="margin: 10%" ></div>
+		  <div id="tracking" style="margin: 10%" ></div>
 		  <p class="highcharts-description">
 		    	센서 차트
 		  </p>
@@ -639,16 +664,97 @@
 			            title: {
 			                text: 'Value',
 			                margin: 80
-			            }
+			            },
+			            allowDecimals:false //y축 소수점 허용 안함
 			        },
 			        series: [{
 			            name: 'Thermistor data',
 			            data: []
 			        }]
 			    });
+			    
+			    chart3 = new Highcharts.Chart({
+			        chart: {
+			            renderTo: "photoresister",
+			            defaultSeriesType: 'spline'
+			        },
+			        title: {
+			            text: 'Live Photoresister Data'
+			        },
+			        xAxis: {
+			            type: 'datetime',
+			            tickPixelInterval: 100,
+			            maxZoom: 20 * 1000
+			        },
+			        yAxis: {
+			            minPadding: 0.2,
+			            maxPadding: 0.2,
+			            title: {
+			                text: 'Value',
+			                margin: 80
+			            }
+			        },
+			        series: [{
+			            name: 'Photoresister data',
+			            data: []
+			        }]
+			    });
+			    
+			    chart4 = new Highcharts.Chart({
+			        chart: {
+			            renderTo: "ultrasonic",
+			            defaultSeriesType: 'spline'
+			        },
+			        title: {
+			            text: 'Live Ultrasonic Data'
+			        },
+			        xAxis: {
+			            type: 'datetime',
+			            tickPixelInterval: 100,
+			            maxZoom: 20 * 1000
+			        },
+			        yAxis: {
+			            minPadding: 0.2,
+			            maxPadding: 0.2,
+			            title: {
+			                text: 'Value',
+			                margin: 80
+			            }
+			        },
+			        series: [{
+			            name: 'Ultrasonic data',
+			            data: []
+			        }]
+			    });
+			    
+			    chart5 = new Highcharts.Chart({
+			        chart: {
+			            renderTo: "tracking",
+			            defaultSeriesType: 'spline'
+			        },
+			        title: {
+			            text: 'Live Tracking Data'
+			        },
+			        xAxis: {
+			            type: 'datetime',
+			            tickPixelInterval: 100,
+			            maxZoom: 20 * 1000
+			        },
+			        yAxis: {
+			            minPadding: 0.2,
+			            maxPadding: 0.2,
+			            title: {
+			                text: 'Value',
+			                margin: 80
+			            }
+			        },
+			        series: [{
+			            name: 'Tracking data',
+			            data: []
+			        }]
+			    });
 			}
 			makeChart(); //차트 불러오기
 		</script>
-		
 	</body>
 </html>
