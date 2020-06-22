@@ -477,94 +477,130 @@
 		</script>
 	</head>
 	<body>
-	
-		<h5 class="alert alert-info">/home/exam19_mqtt.jsp</h5>
-		
-		<img id="cameraView"/>
-		<p id="p"></p>
-		<div id="lcd" align="center">
-			<h3>LCD</h3>
-			lcd0:<input type="text" id="lcd0" size="25"/><br/>
-			lcd1:<input type="text" id="lcd1" size="25"/>
-			<a onclick="lcd_write()" class="btn btn-success">보내기</a>
-		</div>
-		<div id="laser" align="center">
-			<h3>laser</h3>
-			<h6 id="laser_state">laser_state : </h6>
-			<button onclick="laser_on()">ON</button>
-			<button onclick="laser_off()">OFF</button>
-		</div>
-		
-		<div id="buzzer" align="center">
-			<h3>buzzer</h3>
-			<h6 id="buzzer_state">buzzer_state : </h6>
-			<button onclick="buzzer_on()">ON</button>
-			<button onclick="buzzer_off()">OFF</button>
-		</div>
-		
-		<div id="rgbLed" align="center">
-			<h3>RGB LED</h3>
-			<h6 id="rgbLed_state">rgbLed_state : </h6>
-			<button onclick="rgbLed_red()">RED</button>
-			<button onclick="rgbLed_green()">GREEN</button>
-			<button onclick="rgbLed_blue()">BLUE</button>
-			<button onclick="rgbLed_off()">OFF</button>
-		</div>
-		
-		<div id="backTire" align="center">
-			<h3>BackTire 장치 제어</h3>
-			<h6 id="backTire_state">현재 상태 : </h6>
-			<button onclick="backTire_control('forward')">전진</button>
-			<button onclick="backTire_control('stop')">정지</button>
-			<button onclick="backTire_control('backward')">후진</button> <br/>
-			<c:forEach var="i" begin="1" end="8">
-				<button onclick="backTire_control('0', '${i}')">${i}</button>
-			</c:forEach>
-		</div>
-		<div id="motor_control" align="center">
-			<a class="btn btn-danger btn-sm" id="up" onmousedown="tire_button_down('up')" onmouseup="tire_button_up('up')">↑</a>
-			<a class="btn btn-danger btn-sm" id="down" onmousedown="tire_button_down('down')" onmouseup="tire_button_up('down')">↓</a>
-			<a class="btn btn-danger btn-sm" id="left" onmousedown="tire_button_down('left')" onmouseup="tire_button_up('left')">←</a>
-			<a class="btn btn-danger btn-sm" id="right" onmousedown="tire_button_down('right')" onmouseup="tire_button_up('right')">→</a>
-			
-			<a class="btn btn-danger btn-sm" >카메라 위 W</a>
-			<a class="btn btn-danger btn-sm" >카메라 아래 S</a>
-			<a class="btn btn-danger btn-sm" >카메라 왼쪽 A</a>
-			<a class="btn btn-danger btn-sm" >카메라 오른쪽 D</a>
-			
-			<a class="btn btn-danger btn-sm" >거리센서 왼쪽</a>
-			<a class="btn btn-danger btn-sm" >거리센서 오른쪽</a>
-		</div>
-		
-		
-		
-		<br/><hr />
-				
-		<figure class="highcharts-figure">
-		  <div id="gas" style="margin: 10%" ></div>
-		  <div id="thermistor" style="margin: 10%" ></div>
-		  <div id="photoresister" style="margin: 10%" ></div>
-		  <div id="ultrasonic" style="margin: 10%" ></div>
-		  <div id="tracking" style="margin: 10%" ></div>
-		  <p class="highcharts-description">
-		    	센서 차트
-		  </p>
-		</figure>
-		
-		<br/><hr />
-		<figure class="highcharts-figure">
-		  <div id="container-speed" class="chart-container"></div>
-		  <div id="container-rpm" class="chart-container"></div>
-		  <p class="highcharts-description">
-		    	게이지
-		  </p>
-		</figure>
-		
-		<figure class="highcharts-figure">
-		  <div id="gas" style="margin: 10%" ></div>
-		  <div id="thermistor" style="margin: 10%" ></div>
+		<div class="bg_container">
+		    <div class="row">
+		    	<div class="col-sm-offset-0 col-sm-100%" id="section1_2">
+			    	<nav class="navbar navbar-inverse" role="navigation">
+		                <div class="navbar-header">
+		                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+		                        <span class="sr-only">Toggle navigation</span>
+		                        <span class="icon-bar"></span>
+		                        <span class="icon-bar"></span>
+		                        <span class="icon-bar"></span>
+		                    </button>
+		                    <a href="#" class="navbar-brand easysLogo">장치 제어</a>
+		                </div>
+		                <div class="collapse navbar-collapse navbar-ex1-collapse">
+		                    <ul class="nav navbar-nav">
+		                        <li><a href="#section4_1">센서 제어</a></li>
+		                        <li><a href="#section3_1">그래프</a></li>
+		                    </ul>
+		                </div>
+		            </nav>
+		        </div>
+		        <script src="js/jquery-2.1.3.min.js"></script>
+		        <script src="js/bootstrap.min.js"></script>
+			</div>
+			<div class="row">
+		        <div class="col-sm-offset-0 col-sm-100%" id="section1_1">
+			        <img id="cameraView"/>
+			        <br/>
+			        <p id="p"></p>
+		        </div>
+		    </div>
 
-		</figure>
+		     <div class="row">
+		        <div class="col-sm-5" id="section2_1">
+			        <figure class="highcharts-figure" style="">
+					  <div id="container-speed" class="chart-container" id="gage"></div>
+					  <p class="highcharts-description">게이지</p>
+					</figure>
+		        </div>
+		        <div class="col-sm-3" id="section2_2">
+		        	<div id="motor_control" onkeydown="onkeydown_handler()" style="margin-left: 70%;">
+							<a class="btn btn-danger btn-sm" id="up" onmousedown="tire_button_down('up')" onmouseup="tire_button_up('up')">↑</a>
+							<a class="btn btn-danger btn-sm" id="down" onmousedown="tire_button_down('down')" onmouseup="tire_button_up('down')">↓</a>
+							<a class="btn btn-danger btn-sm" id="left" onmousedown="tire_button_down('left')" onmouseup="tire_button_up('left')">←</a>
+							<a class="btn btn-danger btn-sm" id="right" onmousedown="tire_button_down('right')" onmouseup="tire_button_up('right')">→</a>
+						<br/>
+						<a class="btn btn-danger btn-sm" >카메라 위 W</a>
+						<a class="btn btn-danger btn-sm" >카메라 아래 S</a>
+						<a class="btn btn-danger btn-sm" >카메라 왼쪽 A</a>
+						<a class="btn btn-danger btn-sm" >카메라 오른쪽 D</a>
+						<br/>
+						<a class="btn btn-danger btn-sm" >거리센서 왼쪽</a>
+						<a class="btn btn-danger btn-sm" >거리센서 오른쪽</a>
+					</div>
+		        </div>
+		        <div class="col-sm-2" id="section2_3">
+		        	<div id="backTire" align="center">
+						<h3>BackTire 장치 제어</h3>
+						<h6 id="backTire_state">현재 상태 : </h6>
+						<button onclick="backTire_control('forward')">전진</button>
+						<button onclick="backTire_control('stop')">정지</button>
+						<button onclick="backTire_control('backward')">후진</button> <br/>
+						<c:forEach var="i" begin="1" end="8">
+							<button onclick="backTire_control('0', '${i}')">${i}</button>
+						</c:forEach>
+					</div>
+		        </div>
+		    </div>
+
+		    <div class="row">
+		        <div class="col-sm-5" id="section3_1">
+		        	<figure class="highcharts-figure">
+					  <div id="gas" style="margin: 10%" ></div>
+					  <div id="thermistor" style="margin: 10%" ></div>
+					  <div id="photoresister" style="margin: 10%" ></div>
+					</figure>
+		        </div>
+
+		        <div class="col-sm-5" id="section3_2">
+		       		<figure class="highcharts-figure">
+					  <div id="ultrasonic" style="margin: 10%" ></div>
+					  <div id="tracking" style="margin: 10%" ></div>
+					  <p class="highcharts-description">센서 차트</p>
+					</figure>
+		        </div>
+		    </div>
+
+		    <div class="row">
+		        <div class="col-sm-2" id="section4_1">
+		        	<div id="rgbLed" align="center">
+						<h3>RGB LED</h3>
+						<h6 id="rgbLed_state">rgbLed_state : </h6>
+						<button onclick="rgbLed_red()">RED</button>
+						<button onclick="rgbLed_green()">GREEN</button>
+						<button onclick="rgbLed_blue()">BLUE</button>
+						<button onclick="rgbLed_off()">OFF</button>
+					</div>
+		        </div>
+		        <div class="col-sm-2" id="section4_2">
+		        	<div id="buzzer" align="center">
+						<h3>buzzer</h3>
+						<h6 id="buzzer_state">buzzer_state : </h6>
+						<button onclick="buzzer_on()">ON</button>
+						<button onclick="buzzer_off()">OFF</button>
+					</div>
+		        </div>
+		        <div class="col-sm-2" id="section4_3">
+		        	<div id="laser" align="center">
+						<h3>laser</h3>
+						<h6 id="laser_state">laser_state : </h6>
+						<button onclick="laser_on()">ON</button>
+						<button onclick="laser_off()">OFF</button>
+					</div>
+		        </div>
+		        <div class="col-sm-4" id="section4_4">
+		        	<div id="lcd" align="center">
+						<h3>LCD</h3>
+						lcd0:<input type="text" id="lcd0" size="25"/><br/>
+						lcd1:<input type="text" id="lcd1" size="25"/>
+						<a onclick="lcd_write()" class="btn btn-success">보내기</a>
+					</div>
+		        </div>
+		    </div>
+		</div>
 		<script>
 			var chart1, chart2, chart3, chart4, chart5;
 			function makeChart() {
@@ -622,7 +658,7 @@
 			            data: []
 			        }]
 			    });
-			    
+
 			    chart3 = new Highcharts.Chart({
 			        chart: {
 			            renderTo: "photoresister",
@@ -649,7 +685,7 @@
 			            data: []
 			        }]
 			    });
-			    
+
 			    chart4 = new Highcharts.Chart({
 			        chart: {
 			            renderTo: "ultrasonic",
@@ -676,7 +712,7 @@
 			            data: []
 			        }]
 			    });
-			    
+
 			    chart5 = new Highcharts.Chart({
 			        chart: {
 			            renderTo: "tracking",
