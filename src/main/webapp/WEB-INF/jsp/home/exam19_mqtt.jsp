@@ -240,10 +240,12 @@
 				if(keycode == 37 || keycode == 39) {
 					if(keycode == 37) {
 						//left
+						$("#left").css("background-color", "green");
 						var topic = "command/frontTire/left";
 						console.log(topic);
 					}else if(keycode == 39) {
 						//right
+						$("#right").css("background-color", "green");
 						topic = "command/frontTire/right";
 						console.log(topic);
 					}
@@ -254,9 +256,11 @@
 				if(keycode == 38 || keycode == 40 || keycode == 32) {
 					if(keycode == 38) {
 						// up
+						$("#up").css("background-color", "green");
 						var topic = "command/backTire/forward";
 					} else if(keycode == 40) {
 						// down
+						$("#down").css("background-color", "green");
 						var topic = "command/backTire/backward";
 					} else if(keycode == 32) {
 						//spacebar
@@ -282,12 +286,16 @@
 			function onkeyup_handler(event) {
 				var keycode = event.which || event.keycode;
 				if(keycode == 37 || keycode == 39) {
+					$("#left").css("background-color", "");
+					$("#right").css("background-color", "");
 					var topic = "command/frontTire/front";
 					message = new Paho.MQTT.Message("frontTire");
 					message.destinationName = topic;
 					client.send(message);
 				}
 				if(keycode == 38 || keycode == 40) {
+					$("#up").css("background-color", "");
+					$("#down").css("background-color", "");
 					var topic = "command/backTire/respeed";
 					message = new Paho.MQTT.Message("backTire");
 					message.destinationName = topic;
@@ -295,6 +303,68 @@
 				}
 				
 			}
+			
+			var backbuttonPressed = false;
+			var frontbuttonPressed = false;
+			function tire_button_down(direction) {
+				if(direction=="up" || direction=="down") {
+					backbuttonPressed = true;
+				}
+				else {
+					frontbuttonPressed = true;
+				}
+				
+				tire_control(direction);
+				
+			}
+			
+			function tire_button_up(direction) {
+				if(direction=="up" || direction=="down") {
+					backbuttonPressed = false;
+					var topic = "command/backTire/respeed";
+					message = new Paho.MQTT.Message("backTire");
+					message.destinationName = topic;
+					client.send(message);
+				} else {
+					frontbuttonPressed = false;
+					var topic = "command/frontTire/front";
+					message = new Paho.MQTT.Message("frontTire");
+					message.destinationName = topic;
+					client.send(message);
+				}
+			}
+			
+			function tire_control(direction) {
+				if(backbuttonPressed) {
+					if(direction == 'up') {
+						var topic = "command/backTire/forward";
+					}else if(direction == 'down') {
+						var topic = "command/backTire/backward";
+					}
+					message = new Paho.MQTT.Message("tire");
+					message.destinationName = topic;
+					client.send(message);
+					
+					setTimeout(function() {
+						tire_control(direction);
+					}, 30);
+				}
+				if(frontbuttonPressed) {
+					if(direction == 'left') {
+						var topic = "command/frontTire/left";
+					}else if(direction == 'right') {
+						var topic = "command/frontTire/right";
+					}
+					message = new Paho.MQTT.Message("tire");
+					message.destinationName = topic;
+					client.send(message);
+					
+					setTimeout(function() {
+						tire_control(direction);
+					}, 30);
+				}
+			}
+			
 			//게이지----------------
 			
 			$(function(){var gaugeOptions = {
@@ -360,7 +430,7 @@
 			var chartSpeed = Highcharts.chart('container-speed', Highcharts.merge(gaugeOptions, {
 			  yAxis: {
 			    min: 0,
-			    max: 4094,
+			    max: 4000,
 			    title: {
 			      text: 'Speed'
 			    }
@@ -451,11 +521,11 @@
 				<button onclick="backTire_control('0', '${i}')">${i}</button>
 			</c:forEach>
 		</div>
-		<div id="motor_control" onkeydown="onkeydown_handler()" align="center">
-			<a class="btn btn-danger btn-sm" id="up">↑</a>
-			<a class="btn btn-danger btn-sm" id="down">↓</a>
-			<a class="btn btn-danger btn-sm" id="left">←</a>
-			<a class="btn btn-danger btn-sm" id="right">→</a>
+		<div id="motor_control" align="center">
+			<a class="btn btn-danger btn-sm" id="up" onmousedown="tire_button_down('up')" onmouseup="tire_button_up('up')">↑</a>
+			<a class="btn btn-danger btn-sm" id="down" onmousedown="tire_button_down('down')" onmouseup="tire_button_up('down')">↓</a>
+			<a class="btn btn-danger btn-sm" id="left" onmousedown="tire_button_down('left')" onmouseup="tire_button_up('left')">←</a>
+			<a class="btn btn-danger btn-sm" id="right" onmousedown="tire_button_down('right')" onmouseup="tire_button_up('right')">→</a>
 			
 			<a class="btn btn-danger btn-sm" >카메라 위 W</a>
 			<a class="btn btn-danger btn-sm" >카메라 아래 S</a>
@@ -464,7 +534,6 @@
 			
 			<a class="btn btn-danger btn-sm" >거리센서 왼쪽</a>
 			<a class="btn btn-danger btn-sm" >거리센서 오른쪽</a>
-			
 		</div>
 		
 		
