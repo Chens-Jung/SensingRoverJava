@@ -233,7 +233,8 @@
 		  <div class="box2">
 		  	<ul>
 				<li><a href="exam19_mqtt.do">exam19_mqtt.do</a></li>
-				<li><a href="exam04.do">exam04.do</a></li>
+				<li><a href="dashboard.do">dashboard.do</a></li>
+				
 			</ul>
 		  </div>
 		  <div class="box3">

@@ -25,4 +25,10 @@ public class HomeController {
 		LOGGER.info("실행");
 		return "home/exam19_mqtt";
 	}
+	
+	@RequestMapping("/dashboard.do")
+	public String dashboard() {
+		LOGGER.info("실행");
+		return "home/dashboard";
+	}
 }
