@@ -223,14 +223,17 @@
 				console.log(keycode);
 				if(keycode == 87 || keycode== 65 || keycode== 83 || keycode== 68){		//카메라 제어
 					if(keycode == 83){					//앞
-						console.log(keycode);
+						$("#cameradown").css("background-color", "green");
 						var topic="command/camera/front";
 					} else if(keycode == 65){			//왼쪽
+						$("#cameraleft").css("background-color", "green");
 						console.log(keycode);
 						var topic="command/camera/left";
 					} else if(keycode == 87){			//뒤
+						$("#cameraup").css("background-color", "green");
 						var topic="command/camera/back";
 					} else if(keycode == 68){			//오른쪽
+						$("#cameraright").css("background-color", "green");
 						var topic="command/camera/right";
 					}
 					message = new Paho.MQTT.Message("camera");
@@ -273,8 +276,10 @@
 				}
 				if(keycode == 100 || keycode == 102) {		// 거리 센서 제어
 					if(keycode == 100) {					//좌
+						$("#sonicleft").css("background-color", "green");
 						var topic = "command/distance/left";
 					} else if(keycode == 102) {				//우
+						$("#sonicright").css("background-color", "green");
 						var topic = "command/distance/right";
 					} 
 					message = new Paho.MQTT.Message("distance");
@@ -301,7 +306,16 @@
 					message.destinationName = topic;
 					client.send(message);
 				}
-				
+				if(keycode == 87 || keycode== 65 || keycode== 83 || keycode== 68) {
+					$("#cameraup").css("background-color", "");
+					$("#cameradown").css("background-color", "");
+					$("#cameraright").css("background-color", "");
+					$("#cameraleft").css("background-color", "");
+				}
+				if(keycode == 100 || keycode == 102) {
+					$("#sonicleft").css("background-color", "");
+					$("#sonicright").css("background-color", "");
+				}
 			}
 			
 			var backbuttonPressed = false;
@@ -365,6 +379,59 @@
 				}
 			}
 			
+			var camerabuttonPressed = false;
+			function camera_button_down(direction) {
+				camerabuttonPressed = true;
+				camera_control(direction);
+			}
+			function camera_button_up(direction) {
+				camerabuttonPressed = false;
+			}
+			function camera_control(direction) {
+				if(camerabuttonPressed) {
+					if(direction == 'up') {
+						var topic="command/camera/back";
+					}else if(direction == 'down') {
+						var topic="command/camera/front";
+					}else if(direction == 'left') {
+						var topic="command/camera/left";
+					}else if(direction == 'right') {
+						var topic="command/camera/right";
+					}
+					message = new Paho.MQTT.Message("camera");
+					message.destinationName = topic;
+					client.send(message);
+					setTimeout(function() {
+						camera_control(direction);
+					}, 30);
+				}
+			}
+			
+			var sonicbuttonPressed = false;
+			function sonic_button_down(direction) {
+				console.log('keydown');
+				sonicbuttonPressed = true;
+				sonic_control(direction);
+			}
+			function sonic_button_up(direction) {
+				console.log('keyup');
+				sonicbuttonPressed = false;
+			}
+			function sonic_control(direction) {
+				if(sonicbuttonPressed) {
+					if(direction == 'left') {
+						var topic = "command/distance/left"; 
+					}else if(direction == 'right') {
+						var topic = "command/distance/right";
+					}
+					message = new Paho.MQTT.Message("distance");
+					message.destinationName = topic;
+					client.send(message);
+					setTimeout(function() {
+						sonic_control(direction);
+					}, 30);
+				}
+			}
 			//게이지----------------
 			
 			$(function(){var gaugeOptions = {
@@ -498,8 +565,7 @@
 		                </div>
 		            </nav>
 		        </div>
-		        <script src="js/jquery-2.1.3.min.js"></script>
-		        <script src="js/bootstrap.min.js"></script>
+		        
 			</div>
 			<div class="row">
 		        <div class="col-sm-offset-0 col-sm-100%" id="section1_1">
@@ -523,13 +589,13 @@
 							<a class="btn btn-danger btn-sm" id="left" onmousedown="tire_button_down('left')" onmouseup="tire_button_up('left')">←</a>
 							<a class="btn btn-danger btn-sm" id="right" onmousedown="tire_button_down('right')" onmouseup="tire_button_up('right')">→</a>
 						<br/>
-						<a class="btn btn-danger btn-sm" >카메라 위 W</a>
-						<a class="btn btn-danger btn-sm" >카메라 아래 S</a>
-						<a class="btn btn-danger btn-sm" >카메라 왼쪽 A</a>
-						<a class="btn btn-danger btn-sm" >카메라 오른쪽 D</a>
+						<a class="btn btn-danger btn-sm" id="cameraup" onmousedown="camera_button_down('up')" onmouseup="camera_button_up('up')">카메라 위 W</a>
+						<a class="btn btn-danger btn-sm" id="cameradown" onmousedown="camera_button_down('down')" onmouseup="camera_button_up('down')" >카메라 아래 S</a>
+						<a class="btn btn-danger btn-sm" id="cameraleft" onmousedown="camera_button_down('left')" onmouseup="camera_button_up('left')" >카메라 왼쪽 A</a>
+						<a class="btn btn-danger btn-sm" id="cameraright" onmousedown="camera_button_down('right')" onmouseup="camera_button_up('right')" >카메라 오른쪽 D</a>
 						<br/>
-						<a class="btn btn-danger btn-sm" >거리센서 왼쪽</a>
-						<a class="btn btn-danger btn-sm" >거리센서 오른쪽</a>
+						<a class="btn btn-danger btn-sm" id="sonicleft" onmousedown="sonic_button_down('left')" onmouseup="sonic_button_up('left')" >거리센서 왼쪽</a>
+						<a class="btn btn-danger btn-sm" id="sonicright" onmousedown="sonic_button_down('right')" onmouseup="sonic_button_up('right')" >거리센서 오른쪽</a>
 					</div>
 		        </div>
 		        <div class="col-sm-2" id="section2_3">
@@ -743,4 +809,5 @@
 			makeChart(); //차트 불러오기
 		</script>
 	</body>
+
 </html>
