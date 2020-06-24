@@ -851,7 +851,7 @@
 			}
 			jQuery(document).keydown(function(e){	//스크롤 방향키로 안움직이게 하기
 				if(e.target.nodeName != "INPUT" && e.target.nodeName != "TEXTAREA"){
-					if(e.keyCode === 37 || e.keyCode === 38 || e.keyCode === 39 || e.keyCode === 40){
+					if(e.keyCode === 37 || e.keyCode === 38 || e.keyCode === 39 || e.keyCode === 40 || e.keyCode == 32){
 						return false;
 					}
 				}
