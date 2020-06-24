@@ -53,7 +53,7 @@
 			var jsonMessage; */
 			$(function(){
 				// location.hostname : IP(WAS와 MQTT가 같은 곳에서 실행되고 있어야 같은 IP로 쓸 수 있다.)
-				client = new Paho.MQTT.Client(location.hostname, 61614, new Date().getTime().toString());
+				client = new Paho.MQTT.Client("192.168.3.183", 61614, new Date().getTime().toString());
 				
 				//메시지 도착하면 실행할 콜백함수 지정
 				client.onMessageArrived = onMessageArrived;
@@ -614,12 +614,27 @@
 		<div class="row" style="border:1px solid black">
 			<div class="col-sm-9" style="border:1px solid black">
 				<div class="row">
-					<div class="col-sm-4">
+					<div class="col-sm-4" align="center">
 						<img id="cameraView"/>
 					</div>
 					
 					<div class="col-sm-4" style="border:1px solid black">
-			        	<div id="rgbLed" align="center">
+			        	<div id="motor_control" align="center">
+							<p style="text-align: center"><font size="3" face="나눔고딕">카메라 제어</font><p><br/>
+							<br/>
+							<a id="cameraup" class="btn btn-info btn-lg" onmousedown="camera_button_down('up')" onmouseup="camera_button_up()" onclick="click_w()">W</a>
+							<a id="cameradown" class="btn btn-info btn-lg" onmousedown="camera_button_down('down')" onmouseup="camera_button_up()" onclick="click_s()">S</a>
+							<a id="cameraleft" class="btn btn-info btn-lg" onmousedown="camera_button_down('left')" onmouseup="camera_button_up()" onclick="click_a()">A</a>
+							<a id="cameraright" class="btn btn-info btn-lg" onmousedown="camera_button_down('right')" onmouseup="camera_button_up()" onclick="click_d()">D</a>
+							<br/>
+							<p style="text-align: center"><font size="3" face="나눔고딕">거리센서</font><p><br/>
+							<a id="sonicleft" class="btn btn-danger btn-lg" onmousedown="sonic_button_down('left')" onmouseup="sonic_button_up()" onclick="click_4()">4</a>
+							<a id="sonicright" class="btn btn-danger btn-lg" onmousedown="sonic_button_down('right')" onmouseup="sonic_button_up()" onclick="click_6()">6</a>
+						</div>
+					</div>
+					
+					<div class="col-sm-4" id="section2_2" style="border:1px solid black">
+						<div id="rgbLed" align="center">
 							<h3>RGB LED</h3>
 							<h6 id="rgbLed_state">rgbLed_state : </h6>
 							<button class="btn btn-danger" onclick="rgbLed_red()">RED</button>
@@ -638,21 +653,6 @@
 							<h6 id="laser_state">laser_state : </h6>
 							<button class="btn btn-warning" onclick="laser_on()">ON</button>
 							<button class="btn btn-info" onclick="laser_off()">OFF</button>
-						</div>
-					</div>
-					
-					<div class="col-sm-4" id="section2_2" style="border:1px solid black">
-						<div id="motor_control" background-color = #EEE align="center">
-							<p style="text-align: center"><font size="3" face="나눔고딕">카메라 제어</font><p><br/>
-							<br/>
-							<a id="cameraup" class="btn btn-info btn-lg" onmousedown="camera_button_down('up')" onmouseup="camera_button_up()" onclick="click_w()">W</a>
-							<a id="cameradown" class="btn btn-info btn-lg" onmousedown="camera_button_down('down')" onmouseup="camera_button_up()" onclick="click_s()">S</a>
-							<a id="cameraleft" class="btn btn-info btn-lg" onmousedown="camera_button_down('left')" onmouseup="camera_button_up()" onclick="click_a()">A</a>
-							<a id="cameraright" class="btn btn-info btn-lg" onmousedown="camera_button_down('right')" onmouseup="camera_button_up()" onclick="click_d()">D</a>
-							<br/>
-							<p style="text-align: center"><font size="3" face="나눔고딕">거리센서</font><p><br/>
-							<a id="sonicleft" class="btn btn-danger btn-lg" onmousedown="sonic_button_down('left')" onmouseup="sonic_button_up()" onclick="click_4()">4</a>
-							<a id="sonicright" class="btn btn-danger btn-lg" onmousedown="sonic_button_down('right')" onmouseup="sonic_button_up()" onclick="click_6()">6</a>
 						</div>
 					</div>
 				</div>
