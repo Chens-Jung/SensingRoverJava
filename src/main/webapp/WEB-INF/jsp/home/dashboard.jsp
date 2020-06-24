@@ -26,7 +26,6 @@
 		<script src="https://code.highcharts.com/modules/accessibility.js"></script>
 		
 		<link rel="stylesheet" href="${pageContext.request.contextPath}/resource/css/chartcss.css"/>
-		<%-- <link rel="stylesheet" href="${pageContext.request.contextPath}/resource/public/graindashboard/css/graindashboard.css">		 --%>
 		
 		<script>
 			var data = {
@@ -44,7 +43,7 @@
 			var jsonMessage; */
 			$(function(){
 				// location.hostname : IP(WAS와 MQTT가 같은 곳에서 실행되고 있어야 같은 IP로 쓸 수 있다.)
-				client = new Paho.MQTT.Client("192.168.3.32", 61614, new Date().getTime().toString());
+				client = new Paho.MQTT.Client(location.hostname, 61614, new Date().getTime().toString());
 				
 				//메시지 도착하면 실행할 콜백함수 지정
 				client.onMessageArrived = onMessageArrived;
@@ -78,6 +77,7 @@
 					document.getElementById("buzzer_state").innerHTML = "buzzer_state : " + jsonObject["buzzer_state"];
 					document.getElementById("backTire_state").innerHTML = "현재상태 : " + jsonObject["dcMotor_state"];
 					document.getElementById("rgbLed_state").innerHTML = "rgbLed_state : " + jsonObject["rgbLed_state"];
+					document.getElementById("lcd_state").innerHTML = "현재 출력 : " + jsonObject["lcd_state"];
 
 					data = jsonObject;
 					// console.log(data.dcMotor_speed);
@@ -386,7 +386,7 @@
 				camerabuttonPressed = true;
 				camera_control(direction);
 			}
-			function camera_button_up(direction) {
+			function camera_button_up() {
 				camerabuttonPressed = false;
 			}
 			function camera_control(direction) {
@@ -415,7 +415,7 @@
 				sonicbuttonPressed = true;
 				sonic_control(direction);
 			}
-			function sonic_button_up(direction) {
+			function sonic_button_up() {
 				console.log('keyup');
 				sonicbuttonPressed = false;
 			}
@@ -433,6 +433,60 @@
 						sonic_control(direction);
 					}, 30);
 				}
+			}
+			function click_w() {
+			  console.log("클릭 w 실행됨");
+			  message = new Paho.MQTT.Message("click_w")
+			  message.destinationName = "command/camera/back";
+			  client.send(message);
+			}
+			function click_a() {
+			  console.log("클릭 a 실행됨");
+			  message = new Paho.MQTT.Message("click_a")
+			  message.destinationName = "command/camera/left";
+			  client.send(message);
+			}
+			function click_d() {
+			  message = new Paho.MQTT.Message("click_d")
+			  message.destinationName = "command/camera/right";
+			  client.send(message);
+			}
+			function click_s() {
+			  message = new Paho.MQTT.Message("click_s")
+			  message.destinationName = "command/camera/front";
+			  client.send(message);
+			}
+
+			function click_up() {
+			  message = new Paho.MQTT.Message("click_s")
+			  message.destinationName = "command/backTire/forward";
+			  client.send(message);
+			}
+			function click_down() {
+			  message = new Paho.MQTT.Message("click_s")
+			  message.destinationName = "command/backTire/backward";
+			  client.send(message);
+			}
+			function click_left() {
+			  message = new Paho.MQTT.Message("click_left")
+			  message.destinationName = "command/frontTire/left";
+			  client.send(message);
+			}
+			function click_right() {
+			  message = new Paho.MQTT.Message("click_right")
+			  message.destinationName = "command/frontTire/right";
+			  client.send(message);
+			}
+
+			function click_4() {
+			  message = new Paho.MQTT.Message("click_s")
+			  message.destinationName = "command/distance/left";
+			  client.send(message);
+			}
+			function click_6() {
+			  message = new Paho.MQTT.Message("click_s")
+			  message.destinationName = "command/distance/right";
+			  client.send(message);
 			}
 			//게이지----------------
 			
@@ -578,21 +632,17 @@
 					</div>
 					
 					<div class="col-sm-4" id="section2_2" style="border:1px solid black">
-						<div id="motor_control" onkeydown="onkeydown_handler()" align="center">
-							<a class="btn btn-danger btn-sm" id="up" onmousedown="tire_button_down('up')" onmouseup="tire_button_up('up')">↑</a>
-							<a class="btn btn-danger btn-sm" id="down" onmousedown="tire_button_down('down')" onmouseup="tire_button_up('down')">↓</a>
-							<a class="btn btn-danger btn-sm" id="left" onmousedown="tire_button_down('left')" onmouseup="tire_button_up('left')">←</a>
-							<a class="btn btn-danger btn-sm" id="right" onmousedown="tire_button_down('right')" onmouseup="tire_button_up('right')">→</a>
+						<div id="motor_control" background-color = #EEE align="center">
+							<p style="text-align: center"><font size="3" face="나눔고딕">카메라 제어</font><p><br/>
 							<br/>
-							<a class="btn btn-danger btn-sm" id="cameraup" onmousedown="camera_button_down('up')" onmouseup="camera_button_up('up')">카메라 위 W</a>
-							<a class="btn btn-danger btn-sm" id="cameradown" onmousedown="camera_button_down('down')" onmouseup="camera_button_up('down')" >카메라 아래 S</a>
+							<a class="btn btn-info btn-lg" onmousedown="camera_button_down('up')" onmouseup="camera_button_up()" onclick="click_w()">W</a>
+							<a class="btn btn-info btn-lg" onmousedown="camera_button_down('down')" onmouseup="camera_button_up()" onclick="click_s()">S</a>
+							<a class="btn btn-info btn-lg" onmousedown="camera_button_down('left')" onmouseup="camera_button_up()" onclick="click_a()">A</a>
+							<a class="btn btn-info btn-lg" onmousedown="camera_button_down('right')" onmouseup="camera_button_up()" onclick="click_d()">D</a>
 							<br/>
-							<a class="btn btn-danger btn-sm" id="cameraleft" onmousedown="camera_button_down('left')" onmouseup="camera_button_up('left')" >카메라 왼쪽 A</a>
-							<a class="btn btn-danger btn-sm" id="cameraright" onmousedown="camera_button_down('right')" onmouseup="camera_button_up('right')" >카메라 오른쪽 D</a>
-							<br/>
-							<a class="btn btn-danger btn-sm" id="sonicleft" onmousedown="sonic_button_down('left')" onmouseup="sonic_button_up('left')" >거리센서 왼쪽</a>
-							<a class="btn btn-danger btn-sm" id="sonicright" onmousedown="sonic_button_down('right')" onmouseup="sonic_button_up('right')" >거리센서 오른쪽</a>
-							<br/>
+							<p style="text-align: center"><font size="3" face="나눔고딕">거리센서</font><p><br/>
+							<a class="btn btn-danger btn-lg" onmousedown="sonic_button_down('left')" onmouseup="sonic_button_up()" onclick="click_4()">4</a>
+							<a class="btn btn-danger btn-lg" onmousedown="sonic_button_down('right')" onmouseup="sonic_button_up()" onclick="click_6()">6</a>
 						</div>
 					</div>
 				</div>
@@ -600,7 +650,6 @@
 				<div class="row">
 				  <div class="col-sm-4" id="ultrasonic" style="border:1px solid black"><figure class="highcharts-figure"></figure></div>
 				  <div class="col-sm-4" id="tracking" style="border:1px solid black"><figure class="highcharts-figure"></figure></div>
-				  <p class="highcharts-description">센서 차트</p>
 			    </div>
 			    
 			    <div class="row" id="section3_1">
@@ -620,13 +669,19 @@
 			
 				<div id="section2_3" style="border:1px solid black">
 		        	<div id="backTire" align="center">
-						<h3>BackTire 장치 제어</h3>
-						<h6 id="backTire_state">현재 상태 : </h6>
-						<button onclick="backTire_control('forward')">전진</button>
-						<button onclick="backTire_control('stop')">정지</button>
-						<button onclick="backTire_control('backward')">후진</button> <br/>
+						<p style="text-align: center"><font size="10" face="나눔고딕">BackTire Control</font><p><br/>
+						<div id="motor_control">
+							<a class="btn btn-warning btn-lg" id="up" onmousedown="tire_button_down('up')" onmouseup="tire_button_up('up')" onclick="click_up()">↑</a>
+							<a class="btn btn-warning btn-lg" id="down" onmousedown="tire_button_down('down')" onmouseup="tire_button_up('down')" onclick="click_down()">↓</a>
+							<a class="btn btn-warning btn-lg" id="left" onmousedown="tire_button_down('left')" onmouseup="tire_button_up('left')" onclick="click_left()">←</a>
+							<a class="btn btn-warning btn-lg" id="right" onmousedown="tire_button_down('right')" onmouseup="tire_button_up('right')" onclick="click_right()">→</a>
+						</div>
+						<p style="text-align: center"><font size="4" face="나눔고딕" id="backTire_state">현재 상태: </font><p><br/>
+						<button class="btn btn-warning btn-lg" onclick="backTire_control('forward')">전진</button>
+						<button class="btn btn-warning btn-lg" onclick="backTire_control('stop')">정지</button>
+						<button class="btn btn-warning btn-lg" onclick="backTire_control('backward')">후진</button> <br/><br/><br/>
 						<c:forEach var="i" begin="1" end="8">
-							<button onclick="backTire_control('0', '${i}')">${i}</button>
+						<button class="btn btn-warning btn-lg" onclick="backTire_control('0', '${i}')">${i}</button>
 						</c:forEach>
 					</div>
 				</div>
@@ -634,120 +689,14 @@
 				<div id="section4_4" style="border:1px solid black">
 		        	<div id="lcd" align="center">
 						<h3>LCD</h3>
+						<p id="lcd_state"></p>
 						lcd0:<input type="text" id="lcd0" size="25"/><br/>
-						lcd1:<input type="text" id="lcd1" size="25"/>
+						lcd1:<input type="text" id="lcd1" size="25"/><br/>
 						<a onclick="lcd_write()" class="btn btn-success">보내기</a>
 					</div>
 		        </div>
 	  		</div>
 		</div>
-			
-			
-		
-		
-		
-		
-		<%-- <div class="row">
-		  <div class="col-sm-6">
-		  	
-		  </div>
-		        
-		  	<div id="section2_1">
-		        <figure class="highcharts-figure" style="">
-				  <div id="container-speed" class="chart-container" id="gage"></div>
-				  <p class="highcharts-description">게이지</p>
-				</figure>
-			</div>
-			
-	        <div id="section2_3">
-	        	<div id="backTire" align="center">
-					<h3>BackTire 장치 제어</h3>
-					<h6 id="backTire_state">현재 상태 : </h6>
-					<button onclick="backTire_control('forward')">전진</button>
-					<button onclick="backTire_control('stop')">정지</button>
-					<button onclick="backTire_control('backward')">후진</button> <br/>
-					<c:forEach var="i" begin="1" end="8">
-						<button onclick="backTire_control('0', '${i}')">${i}</button>
-					</c:forEach>
-				</div>
-	        </div>
-		  </div> --%>
-		
-	
-	
-	
-		<%-- <div class="bg_container">
-		    <div class="row">
-		    	<div class="col-sm-offset-0 col-sm-100%" id="section1_2">
-			    	<nav class="navbar navbar-inverse" role="navigation">
-		                <div class="navbar-header">
-		                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-		                        <span class="sr-only">Toggle navigation</span>
-		                        <span class="icon-bar"></span>
-		                        <span class="icon-bar"></span>
-		                        <span class="icon-bar"></span>
-		                    </button>
-		                    <a href="#" class="navbar-brand easysLogo">장치 제어</a>
-		                </div>
-		                <div class="collapse navbar-collapse navbar-ex1-collapse">
-		                    <ul class="nav navbar-nav">
-		                        <li><a href="#section4_1">센서 제어</a></li>
-		                        <li><a href="#section3_1">그래프</a></li>
-		                    </ul>
-		                </div>
-		            </nav>
-		        </div>
-			</div>
-			
-			<div class="row col-md-4">
-		        <div class="col-md-4 col-xl-4 mb-3 mb-md-4" id="section1_1">
-			        <img id="cameraView" src="${pageContext.request.contextPath}/resource/img/bg1.jpg" style="width:320px;height:240px"/>
-			        <br/>
-			        <p id="p"></p>
-		        </div>
-		        
-		        <div class="col-md-4 col-xl-4 mb-3 mb-md-4" id="section2_1">
-			        <figure class="highcharts-figure" style="">
-					  <div id="container-speed" class="chart-container" id="gage"></div>
-					  <p class="highcharts-description">게이지</p>
-					</figure>
-		        </div>
-		        
-		        <div class="col-md-4 col-xl-4 mb-3 mb-md-4" id="section2_2">
-		        	<div id="motor_control" onkeydown="onkeydown_handler()" style="margin-left: 70%;">
-							<a class="btn btn-danger btn-sm" id="up" onmousedown="tire_button_down('up')" onmouseup="tire_button_up('up')">↑</a>
-							<a class="btn btn-danger btn-sm" id="down" onmousedown="tire_button_down('down')" onmouseup="tire_button_up('down')">↓</a>
-							<a class="btn btn-danger btn-sm" id="left" onmousedown="tire_button_down('left')" onmouseup="tire_button_up('left')">←</a>
-							<a class="btn btn-danger btn-sm" id="right" onmousedown="tire_button_down('right')" onmouseup="tire_button_up('right')">→</a>
-						<br/>
-						<a class="btn btn-danger btn-sm" id="cameraup" onmousedown="camera_button_down('up')" onmouseup="camera_button_up('up')">카메라 위 W</a>
-						<a class="btn btn-danger btn-sm" id="cameradown" onmousedown="camera_button_down('down')" onmouseup="camera_button_up('down')" >카메라 아래 S</a>
-						<a class="btn btn-danger btn-sm" id="cameraleft" onmousedown="camera_button_down('left')" onmouseup="camera_button_up('left')" >카메라 왼쪽 A</a>
-						<a class="btn btn-danger btn-sm" id="cameraright" onmousedown="camera_button_down('right')" onmouseup="camera_button_up('right')" >카메라 오른쪽 D</a>
-						<br/>
-						<a class="btn btn-danger btn-sm" id="sonicleft" onmousedown="sonic_button_down('left')" onmouseup="sonic_button_up('left')" >거리센서 왼쪽</a>
-						<a class="btn btn-danger btn-sm" id="sonicright" onmousedown="sonic_button_down('right')" onmouseup="sonic_button_up('right')" >거리센서 오른쪽</a>
-					</div>
-		        </div>
-		    </div>
-		    <div>
-		        <div class="col-sm-2" id="section2_3">
-		        	<div id="backTire" align="center">
-						<h3>BackTire 장치 제어</h3>
-						<h6 id="backTire_state">현재 상태 : </h6>
-						<button onclick="backTire_control('forward')">전진</button>
-						<button onclick="backTire_control('stop')">정지</button>
-						<button onclick="backTire_control('backward')">후진</button> <br/>
-						<c:forEach var="i" begin="1" end="8">
-							<button onclick="backTire_control('0', '${i}')">${i}</button>
-						</c:forEach>
-					</div>
-		        </div>
-		    </div>
-
-		    
-
-		     --%>
 		<script>
 			var chart1, chart2, chart3, chart4, chart5;
 			function makeChart() {
@@ -882,11 +831,19 @@
 			            }
 			        },
 			        series: [{
+			        	color:"orange",
 			            name: 'Tracking data',
 			            data: []
 			        }]
 			    });
 			}
+			jQuery(document).keydown(function(e){	//스크롤 방향키로 안움직이게 하기
+				if(e.target.nodeName != "INPUT" && e.target.nodeName != "TEXTAREA"){
+					if(e.keyCode === 37 || e.keyCode === 38 || e.keyCode === 39 || e.keyCode === 40){
+						return false;
+					}
+				}
+			});
 			makeChart(); //차트 불러오기
 		</script>
 	</body>
