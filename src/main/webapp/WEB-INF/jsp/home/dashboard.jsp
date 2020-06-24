@@ -391,6 +391,7 @@
 				}
 			}
 			
+			
 			$(function() {
 				var directions = document.querySelectorAll("#tire_control a");
 				directions.forEach(function(a) {
@@ -443,6 +444,45 @@
 			}
 				
 			
+			$(function() {
+				var motor_direction = document.querySelectorAll("#motor_control a");
+				motor_direction.forEach(function(a) {
+					a.addEventListener("touchstart", function() {
+						move = true;
+						camera_control_touch(a.id);
+					});
+					a.addEventListener("touchend", function() {
+						move = false;
+					});
+				});
+				
+				
+			});
+			var move = false;
+			function camera_control_touch(motor_direction){
+				if(move){
+					if(motor_direction == 'cameraup') {
+						var topic="command/camera/back";
+					}if(motor_direction == 'cameradown') {
+						var topic="command/camera/front";
+					}if(motor_direction == 'cameraleft') {
+						var topic="command/camera/left";
+					}if(motor_direction == 'cameraright') {
+						var topic="command/camera/right";
+					}if(motor_direction == 'sonicleft') {
+						var topic="command/distance/left";
+					}if(motor_direction == 'sonicright') {
+						var topic="command/distance/right";
+					}
+					message = new Paho.MQTT.Message("camera&sonic");
+					message.destinationName = topic;
+					client.send(message);
+					setTimeout(function() {
+						camera_control_touch(motor_direction);
+					}, 30);
+				}
+			}
+			
 			var camerabuttonPressed = false;
 			function camera_button_down(direction) {
 				camerabuttonPressed = true;
@@ -451,6 +491,10 @@
 			function camera_button_up() {
 				camerabuttonPressed = false;
 			}
+			
+			
+			
+			
 			function camera_control(direction) {
 				if(camerabuttonPressed) {
 					if(direction == 'up') {
