@@ -658,27 +658,14 @@
 				</div>
 				
 				<div class="row">
-				  <div class="col-sm-4" id="ultrasonic" style="border:1px solid black"><figure class="highcharts-figure"></figure></div>
-				  <div class="col-sm-4" id="tracking" style="border:1px solid black"><figure class="highcharts-figure"></figure></div>
-			    </div>
-			    
-			    <div class="row" id="section3_1">
-				  <div class="col-sm-4" id="gas" style="border:1px solid black"><figure class="highcharts-figure"></figure></div>
-				  <div class="col-sm-4" id="thermistor" style="border:1px solid black"><figure class="highcharts-figure"></figure></div>
-				  <div class="col-sm-4" id="photoresister" style="border:1px solid black"><figure class="highcharts-figure"></figure></div>
-		        </div>
-			</div>
-
-			<div class="col-sm-3" style="border:1px solid black" align="center">
-				<div id="section2_1">
-			        <figure class="highcharts-figure" >
-					  <div id="container-speed" class="chart-container" id="gage"></div>
-					  <p class="highcharts-description">게이지</p>
-					</figure>
-				</div>
-			
-				<div id="section2_3" style="border:1px solid black">
-		        	<div id="backTire" align="center">
+					<div class="col-sm-4">
+						<figure class="highcharts-figure" >
+							<div id="container-speed" class="chart-container" id="gage"></div>
+							<p class="highcharts-description">게이지</p>
+						</figure>
+					</div>
+					
+					<div class="col-sm-4" id="section2_3" style="border:1px solid black" align="center">
 						<p style="text-align: center"><font size="10" face="나눔고딕">BackTire Control</font><p><br/>
 						<div id="motor_control">
 							<a class="btn btn-warning btn-lg" id="up" onmousedown="tire_button_down('up')" onmouseup="tire_button_up('up')" onclick="click_up()">↑</a>
@@ -694,17 +681,28 @@
 						<button class="btn btn-warning btn-lg" onclick="backTire_control('0', '${i}')">${i}</button>
 						</c:forEach>
 					</div>
-				</div>
-			
-				<div id="section4_4" style="border:1px solid black">
-		        	<div id="lcd" align="center">
-						<h3>LCD</h3>
-						<p id="lcd_state"></p>
-						<p>lcd0:</p><input type="text" id="lcd0" size="25"/><br/>
-						<p>lcd1:</p><input type="text" id="lcd1" size="25"/><br/>
-						<a onclick="lcd_write()" class="btn btn-success">보내기</a>
+					
+					<div class="col-sm-4" style="border:1px solid black">
+						<div id="lcd" align="center">
+							<h3>LCD</h3>
+							<p id="lcd_state"></p>
+							<p style="display:inline-block;">lcd0:</p><input type="text" id="lcd0" size="25"/><br/>
+							<p style="display:inline-block;">lcd1:</p><input type="text" id="lcd1" size="25"/><br/>
+							<a onclick="lcd_write()" class="btn btn-success">보내기</a>
+						</div>
 					</div>
+			    </div>
+			    
+			    <div class="row" id="section3_1">
+				  <div class="col-sm-4" id="gas" style="border:1px solid black"><figure class="highcharts-figure"></figure></div>
+				  <div class="col-sm-4" id="thermistor" style="border:1px solid black"><figure class="highcharts-figure"></figure></div>
+				  <div class="col-sm-4" id="photoresister" style="border:1px solid black"><figure class="highcharts-figure"></figure></div>
 		        </div>
+			</div>
+
+			<div class="col-sm-3" style="border:1px solid black" align="center">
+				<div id="ultrasonic" style="border:1px solid black"><figure class="highcharts-figure"></figure></div>
+				<div id="tracking" style="border:1px solid black"><figure class="highcharts-figure"></figure></div>
 	  		</div>
 		</div>
 		<script>
