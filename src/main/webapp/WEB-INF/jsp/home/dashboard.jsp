@@ -26,6 +26,16 @@
 		<script src="https://code.highcharts.com/modules/accessibility.js"></script>
 		
 		<link rel="stylesheet" href="${pageContext.request.contextPath}/resource/css/chartcss.css"/>
+		<script src="<%=application.getContextPath()%>/resource/themes/dark-unica.js"></script>
+		
+		<style>
+			body {
+				background: #384051;
+			}
+			p, h3, h6, font {
+				color: #E4E5E7;
+			}
+		</style>
 		
 		<script>
 			var data = {
@@ -612,22 +622,22 @@
 			        	<div id="rgbLed" align="center">
 							<h3>RGB LED</h3>
 							<h6 id="rgbLed_state">rgbLed_state : </h6>
-							<button onclick="rgbLed_red()">RED</button>
-							<button onclick="rgbLed_green()">GREEN</button>
-							<button onclick="rgbLed_blue()">BLUE</button>
-							<button onclick="rgbLed_off()">OFF</button>
+							<button class="btn btn-danger" onclick="rgbLed_red()">RED</button>
+							<button class="btn btn-success" onclick="rgbLed_green()">GREEN</button>
+							<button class="btn btn-primary" onclick="rgbLed_blue()">BLUE</button>
+							<button class="btn btn-info" onclick="rgbLed_off()">OFF</button>
 						</div>
 			        	<div id="buzzer" align="center">
 							<h3>buzzer</h3>
 							<h6 id="buzzer_state">buzzer_state : </h6>
-							<button onclick="buzzer_on()">ON</button>
-							<button onclick="buzzer_off()">OFF</button>
+							<button class="btn btn-warning" onclick="buzzer_on()">ON</button>
+							<button class="btn btn-info" onclick="buzzer_off()">OFF</button>
 						</div>
 			        	<div id="laser" align="center">
 							<h3>laser</h3>
 							<h6 id="laser_state">laser_state : </h6>
-							<button onclick="laser_on()">ON</button>
-							<button onclick="laser_off()">OFF</button>
+							<button class="btn btn-warning" onclick="laser_on()">ON</button>
+							<button class="btn btn-info" onclick="laser_off()">OFF</button>
 						</div>
 					</div>
 					
@@ -635,14 +645,14 @@
 						<div id="motor_control" background-color = #EEE align="center">
 							<p style="text-align: center"><font size="3" face="나눔고딕">카메라 제어</font><p><br/>
 							<br/>
-							<a class="btn btn-info btn-lg" onmousedown="camera_button_down('up')" onmouseup="camera_button_up()" onclick="click_w()">W</a>
-							<a class="btn btn-info btn-lg" onmousedown="camera_button_down('down')" onmouseup="camera_button_up()" onclick="click_s()">S</a>
-							<a class="btn btn-info btn-lg" onmousedown="camera_button_down('left')" onmouseup="camera_button_up()" onclick="click_a()">A</a>
-							<a class="btn btn-info btn-lg" onmousedown="camera_button_down('right')" onmouseup="camera_button_up()" onclick="click_d()">D</a>
+							<a id="cameraup" class="btn btn-info btn-lg" onmousedown="camera_button_down('up')" onmouseup="camera_button_up()" onclick="click_w()">W</a>
+							<a id="cameradown" class="btn btn-info btn-lg" onmousedown="camera_button_down('down')" onmouseup="camera_button_up()" onclick="click_s()">S</a>
+							<a id="cameraleft" class="btn btn-info btn-lg" onmousedown="camera_button_down('left')" onmouseup="camera_button_up()" onclick="click_a()">A</a>
+							<a id="cameraright" class="btn btn-info btn-lg" onmousedown="camera_button_down('right')" onmouseup="camera_button_up()" onclick="click_d()">D</a>
 							<br/>
 							<p style="text-align: center"><font size="3" face="나눔고딕">거리센서</font><p><br/>
-							<a class="btn btn-danger btn-lg" onmousedown="sonic_button_down('left')" onmouseup="sonic_button_up()" onclick="click_4()">4</a>
-							<a class="btn btn-danger btn-lg" onmousedown="sonic_button_down('right')" onmouseup="sonic_button_up()" onclick="click_6()">6</a>
+							<a id="sonicleft" class="btn btn-danger btn-lg" onmousedown="sonic_button_down('left')" onmouseup="sonic_button_up()" onclick="click_4()">4</a>
+							<a id="sonicright" class="btn btn-danger btn-lg" onmousedown="sonic_button_down('right')" onmouseup="sonic_button_up()" onclick="click_6()">6</a>
 						</div>
 					</div>
 				</div>
@@ -690,8 +700,8 @@
 		        	<div id="lcd" align="center">
 						<h3>LCD</h3>
 						<p id="lcd_state"></p>
-						lcd0:<input type="text" id="lcd0" size="25"/><br/>
-						lcd1:<input type="text" id="lcd1" size="25"/><br/>
+						<p>lcd0:</p><input type="text" id="lcd0" size="25"/><br/>
+						<p>lcd1:</p><input type="text" id="lcd1" size="25"/><br/>
 						<a onclick="lcd_write()" class="btn btn-success">보내기</a>
 					</div>
 		        </div>
@@ -723,7 +733,8 @@
 			        },
 			        series: [{
 			            name: 'Gas data',
-			            data: []
+			            data: [],
+			            color:"#F4E442"
 			        }]
 			    });
 
@@ -751,7 +762,8 @@
 			        },
 			        series: [{
 			            name: 'Thermistor data',
-			            data: []
+			            data: [],
+			            color:"#09C19C"
 			        }]
 			    });
 
@@ -778,7 +790,8 @@
 			        },
 			        series: [{
 			            name: 'Photoresister data',
-			            data: []
+			            data: [],
+			            color: "#FA1588"
 			        }]
 			    });
 
@@ -805,7 +818,8 @@
 			        },
 			        series: [{
 			            name: 'Ultrasonic data',
-			            data: []
+			            data: [],
+			            color: "#8C51FA"
 			        }]
 			    });
 
@@ -831,9 +845,9 @@
 			            }
 			        },
 			        series: [{
-			        	color:"orange",
 			            name: 'Tracking data',
-			            data: []
+			            data: [],
+			            color: "#5EB5FB"
 			        }]
 			    });
 			}
