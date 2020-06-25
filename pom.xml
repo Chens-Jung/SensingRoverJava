@@ -129,6 +129,14 @@
 		    <artifactId>json</artifactId>
 		    <version>20180813</version>
 		</dependency>
+		
+		<!-- base64 -->
+		<dependency>
+		    <groupId>commons-net</groupId>
+		    <artifactId>commons-net</artifactId>
+		    <version>3.6</version>
+		</dependency>
+		
 	</dependencies>
 
 	<build>
