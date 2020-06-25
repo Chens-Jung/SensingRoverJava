@@ -699,6 +699,9 @@ function dataSave() {
 		url:"saveSensor.do",
 		type:"POST",
 		data:{gas:sensor.gas, thermistor:sensor.thermistor, photoresistor:sensor.photoresistor, tracking:sensor.tracking, ultrasonic:sensor.ultrasonic},
+		success:function() {
+			window.alert("성겅!");
+		},
 		error:function() {
 			window.alert("Fail");
 		}
