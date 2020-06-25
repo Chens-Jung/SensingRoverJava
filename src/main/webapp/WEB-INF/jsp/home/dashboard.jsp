@@ -53,7 +53,7 @@
 			var jsonMessage; */
 			$(function(){
 				// location.hostname : IP(WAS와 MQTT가 같은 곳에서 실행되고 있어야 같은 IP로 쓸 수 있다.)
-				client = new Paho.MQTT.Client("192.168.3.183", 61614, new Date().getTime().toString());
+				client = new Paho.MQTT.Client(location.hostname, 61614, new Date().getTime().toString());
 				
 				//메시지 도착하면 실행할 콜백함수 지정
 				client.onMessageArrived = onMessageArrived;
@@ -66,11 +66,27 @@
 				console.log("mqtt broker connected");
 				client.subscribe("/camerapub");
 				client.subscribe("/sensor");
+				client.subscribe("/capturepub");
 			}
 	
 			function onMessageArrived(message) {
 				/* console.log("실행");
 				console.log(message.payloadString); */
+				if(message.destinationName == "/capturepub") {
+					var b64_data = message.payloadString;
+// 					var b64_object = {
+// 							img: b64_data
+// 					};
+					$.ajax({
+						type:"POST",
+						url:"captureDown.do",
+						data:{img:b64_data},
+						success:function(data) {
+							window.alert("캡처파일 저장 " + data.result);
+						}
+					});
+					console.log("ajax");
+				}
 				if(message.destinationName == "/camerapub") {
 					var cameraView = $("#cameraView").attr("src", "data:image/jpg;base64," + message.payloadString);
 				}
@@ -88,6 +104,7 @@
 					document.getElementById("backTire_state").innerHTML = "현재상태 : " + jsonObject["dcMotor_state"];
 					document.getElementById("rgbLed_state").innerHTML = "rgbLed_state : " + jsonObject["rgbLed_state"];
 					document.getElementById("lcd_state").innerHTML = "현재 출력 : " + jsonObject["lcd_state"];
+						
 
 					data = jsonObject;
 					// console.log(data.dcMotor_speed);
@@ -143,7 +160,7 @@
 						lcd1:lcd1c
 				};
 				
-				message = new Paho.MQTT.Message(JSON.stringify(target));
+				asd = new Paho.MQTT.Message(JSON.stringify(target));
 			    message.destinationName = "command/lcd";
 			    client.send(message);
 			}
@@ -391,6 +408,98 @@
 				}
 			}
 			
+			
+			$(function() {
+				var directions = document.querySelectorAll("#tire_control a");
+				directions.forEach(function(a) {
+					console.log(a.id);
+					a.addEventListener("touchstart", function() {
+						go = true;
+						tire_control_touch(a.id);
+					});
+					a.addEventListener("touchend", function() {
+						go = false;
+					});
+				});
+			})
+			
+			var go = false;
+			function tire_control_touch(direction) {
+				if(go) {
+					if(direction == "up") {
+						var topic = "command/backTire/forward";
+					}
+					if(direction == "down") {
+						var topic = "command/backTire/backward";
+					}
+					if(direction == "left") {
+						var topic = "command/frontTire/left";
+					}
+					if(direction == "right") {
+						var topic = "command/frontTire/right";
+					}
+					message = new Paho.MQTT.Message("tire");
+					message.destinationName = topic;
+					client.send(message);
+					setTimeout(function() {
+						tire_control_touch(direction);
+					}, 30);
+				}else {
+					if(direction == "up" || direction == "down") {
+						var topic = "command/backTire/respeed";
+						message = new Paho.MQTT.Message("tire");
+						message.destinationName = topic;
+						client.send(message);	
+					}else {
+						var topic = "command/frontTire/front";
+						message = new Paho.MQTT.Message("tire");
+						message.destinationName = topic;
+						client.send(message);	
+					}
+					
+				}	
+			}
+				
+			
+			$(function() {
+				var motor_direction = document.querySelectorAll("#motor_control a");
+				motor_direction.forEach(function(a) {
+					a.addEventListener("touchstart", function() {
+						move = true;
+						camera_control_touch(a.id);
+					});
+					a.addEventListener("touchend", function() {
+						move = false;
+					});
+				});
+				
+				
+			});
+			var move = false;
+			function camera_control_touch(motor_direction){
+				if(move){
+					if(motor_direction == 'cameraup') {
+						var topic="command/camera/back";
+					}if(motor_direction == 'cameradown') {
+						var topic="command/camera/front";
+					}if(motor_direction == 'cameraleft') {
+						var topic="command/camera/left";
+					}if(motor_direction == 'cameraright') {
+						var topic="command/camera/right";
+					}if(motor_direction == 'sonicleft') {
+						var topic="command/distance/left";
+					}if(motor_direction == 'sonicright') {
+						var topic="command/distance/right";
+					}
+					message = new Paho.MQTT.Message("camera&sonic");
+					message.destinationName = topic;
+					client.send(message);
+					setTimeout(function() {
+						camera_control_touch(motor_direction);
+					}, 30);
+				}
+			}
+			
 			var camerabuttonPressed = false;
 			function camera_button_down(direction) {
 				camerabuttonPressed = true;
@@ -399,6 +508,10 @@
 			function camera_button_up() {
 				camerabuttonPressed = false;
 			}
+			
+			
+			
+			
 			function camera_control(direction) {
 				if(camerabuttonPressed) {
 					if(direction == 'up') {
@@ -444,6 +557,9 @@
 					}, 30);
 				}
 			}
+			
+			
+			
 			function click_w() {
 			  console.log("클릭 w 실행됨");
 			  message = new Paho.MQTT.Message("click_w")
@@ -498,6 +614,13 @@
 			  message.destinationName = "command/distance/right";
 			  client.send(message);
 			}
+			
+			function camera_capture() {
+				message = new Paho.MQTT.Message("capture")
+				message.destinationName = "command/camera/capture";
+				client.send(message);
+			}
+			
 			//게이지----------------
 			
 			$(function(){var gaugeOptions = {
@@ -615,16 +738,17 @@
 			<div class="col-sm-9" style="border:1px solid black">
 				<div class="row">
 					<div class="col-sm-4" align="center">
-						<img id="cameraView"/>
+						<img id="cameraView" style="width: 100%; height: 100%;"/><br/>
+						<button class="btn btn-info" onclick="camera_capture()">capture</button>
 					</div>
 					
 					<div class="col-sm-4" style="border:1px solid black">
 			        	<div id="motor_control" align="center">
 							<p style="text-align: center"><font size="3" face="나눔고딕">카메라 제어</font><p><br/>
 							<br/>
-							<a id="cameraup" class="btn btn-info btn-lg" onmousedown="camera_button_down('up')" onmouseup="camera_button_up()" onclick="click_w()">W</a>
-							<a id="cameradown" class="btn btn-info btn-lg" onmousedown="camera_button_down('down')" onmouseup="camera_button_up()" onclick="click_s()">S</a>
+							<a id="cameraup" class="btn btn-info btn-lg" onmousedown="camera_button_down('up')" onmouseup="camera_button_up()" onclick="click_w()" style="margin-bottom: 5px;">W</a><br/>
 							<a id="cameraleft" class="btn btn-info btn-lg" onmousedown="camera_button_down('left')" onmouseup="camera_button_up()" onclick="click_a()">A</a>
+							<a id="cameradown" class="btn btn-info btn-lg" onmousedown="camera_button_down('down')" onmouseup="camera_button_up()" onclick="click_s()">S</a>
 							<a id="cameraright" class="btn btn-info btn-lg" onmousedown="camera_button_down('right')" onmouseup="camera_button_up()" onclick="click_d()">D</a>
 							<br/>
 							<p style="text-align: center"><font size="3" face="나눔고딕">거리센서</font><p><br/>
@@ -666,11 +790,11 @@
 					</div>
 					
 					<div class="col-sm-4" id="section2_3" style="border:1px solid black" align="center">
-						<p style="text-align: center"><font size="10" face="나눔고딕">BackTire Control</font><p><br/>
-						<div id="motor_control">
-							<a class="btn btn-warning btn-lg" id="up" onmousedown="tire_button_down('up')" onmouseup="tire_button_up('up')" onclick="click_up()">↑</a>
-							<a class="btn btn-warning btn-lg" id="down" onmousedown="tire_button_down('down')" onmouseup="tire_button_up('down')" onclick="click_down()">↓</a>
+						<p style="text-align: center"><font size="10" face="나눔고딕">Tire Control</font><p><br/>
+						<div id="tire_control">
+							<a class="btn btn-warning btn-lg" id="up" onmousedown="tire_button_down('up')" onmouseup="tire_button_up('up')" onclick="click_up()" style="margin-bottom: 5px;">↑</a><br/>
 							<a class="btn btn-warning btn-lg" id="left" onmousedown="tire_button_down('left')" onmouseup="tire_button_up('left')" onclick="click_left()">←</a>
+							<a class="btn btn-warning btn-lg" id="down" onmousedown="tire_button_down('down')" onmouseup="tire_button_up('down')" onclick="click_down()">↓</a>
 							<a class="btn btn-warning btn-lg" id="right" onmousedown="tire_button_down('right')" onmouseup="tire_button_up('right')" onclick="click_right()">→</a>
 						</div>
 						<p style="text-align: center"><font size="4" face="나눔고딕" id="backTire_state">현재 상태: </font><p><br/>
@@ -684,7 +808,8 @@
 					
 					<div class="col-sm-4" style="border:1px solid black">
 						<div id="lcd" align="center">
-							<h3>LCD</h3>
+							<p style="text-align: center"><font size="6" face="나눔고딕">LCD</font><p><br/>
+							<!-- <h3>LCD</h3> -->
 							<p id="lcd_state"></p>
 							<p style="display:inline-block;">lcd0:</p><input type="text" id="lcd0" size="25"/><br/>
 							<p style="display:inline-block;">lcd1:</p><input type="text" id="lcd1" size="25"/><br/>
@@ -706,6 +831,7 @@
 	  		</div>
 		</div>
 		<script>
+
 			var chart1, chart2, chart3, chart4, chart5;
 			function makeChart() {
 			    chart1 = new Highcharts.Chart({
