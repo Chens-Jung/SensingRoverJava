@@ -2,33 +2,40 @@ package com.mycompany.project.model;
 
 public class Sensor {
 	//필드
+	private int no;
 	private int gas;
-	private int thermistor;
-	private int photoresister;
-	private int tracking;
+	private double thermistor;
+	private int photoresistor;
+	private String tracking;
 	private double ultrasonic;
+	private String date;
+	
+	
+	public int getNo() {
+		return no;
+	}
 	public int getGas() {
 		return gas;
 	}
 	public void setGas(int gas) {
 		this.gas = gas;
 	}
-	public int getThermistor() {
+	public double getThermistor() {
 		return thermistor;
 	}
-	public void setThermistor(int thermistor) {
+	public void setThermistor(double thermistor) {
 		this.thermistor = thermistor;
 	}
-	public int getPhotoresister() {
-		return photoresister;
+	public int getPhotoresistor() {
+		return photoresistor;
 	}
-	public void setPhotoresister(int photoresister) {
-		this.photoresister = photoresister;
+	public void setPhotoresistor(int photoresistor) {
+		this.photoresistor = photoresistor;
 	}
-	public int getTracking() {
+	public String getTracking() {
 		return tracking;
 	}
-	public void setTracking(int tracking) {
+	public void setTracking(String tracking) {
 		this.tracking = tracking;
 	}
 	public double getUltrasonic() {
@@ -36,6 +43,12 @@ public class Sensor {
 	}
 	public void setUltrasonic(double ultrasonic) {
 		this.ultrasonic = ultrasonic;
+	}
+	public String getDate() {
+		return date;
+	}
+	public void setDate(String date) {
+		this.date = date;
 	}
 	
 	

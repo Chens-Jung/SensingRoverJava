@@ -693,7 +693,14 @@ setInterval(function () {
 });
 
 function dataSave() {
+	var sensor = data;
+	console.log(sensor);
 	$.ajax({
-		
+		url:"saveSensor.do",
+		type:"POST",
+		data:{gas:sensor.gas, thermistor:sensor.thermistor, photoresistor:sensor.photoresistor, tracking:sensor.tracking, ultrasonic:sensor.ultrasonic},
+		error:function() {
+			window.alert("Fail");
+		}
 	})
 }
