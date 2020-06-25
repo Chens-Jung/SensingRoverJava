@@ -18,5 +18,4 @@ public class SensorService {
 	public void save(Sensor sensor) {
 		sensorDao.insert(sensor);
 	}
-	
 }

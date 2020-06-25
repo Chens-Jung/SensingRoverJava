@@ -41,10 +41,11 @@ public class HomeController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(HomeController.class);
 	
 	@Autowired
-	private SensorService sensorService;
+	private CameraService cameraService;
+	
 	
 	@Autowired
-	private CameraService cameraService;
+	private SensorService sensorService;
 	
 	@RequestMapping("/main.do")
 	public String main() {
@@ -66,7 +67,8 @@ public class HomeController {
 	
 	@PostMapping("/captureDown.do")
 	public void captureDown(@RequestParam("img") String b64_string,
-							HttpServletResponse response) throws IOException {		
+							HttpServletResponse response,
+							HttpServletRequest request) throws IOException {		
 //		LOGGER.info("실행");
 		Date date = new Date();
 		String saveDir = "C:/MyWorkspace/semiproject/capture_image/";

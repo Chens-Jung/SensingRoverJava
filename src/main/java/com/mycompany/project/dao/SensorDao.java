@@ -15,5 +15,4 @@ public class SensorDao extends EgovAbstractMapper {
 	public void insert(Sensor sensor) {
 		insert("sensor.insert", sensor);
 	}
-	
 }
