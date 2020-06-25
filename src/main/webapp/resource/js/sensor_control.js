@@ -14,7 +14,7 @@ var pwm = 0;
 var jsonMessage; */
 $(function(){
 	// location.hostname : IP(WAS와 MQTT가 같은 곳에서 실행되고 있어야 같은 IP로 쓸 수 있다.)
-	client = new Paho.MQTT.Client(location.hostname, 61614, new Date().getTime().toString());
+	client = new Paho.MQTT.Client("192.168.3.183", 61614, new Date().getTime().toString());
 	
 	//메시지 도착하면 실행할 콜백함수 지정
 	client.onMessageArrived = onMessageArrived;
@@ -691,3 +691,9 @@ setInterval(function () {
   }
 }, 1000);
 });
+
+function dataSave() {
+	$.ajax({
+		
+	})
+}
