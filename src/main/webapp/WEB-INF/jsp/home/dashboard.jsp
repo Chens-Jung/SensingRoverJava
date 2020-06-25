@@ -101,9 +101,9 @@
 					<div class="row">
 						<!-- ******** 속도 게이지 ********* -->
 						<div class="col-sm-4">
+							<p style="text-align: center"><font size="4">SPEED</font></p>
 							<figure class="highcharts-figure" >
 								<div id="container-speed" class="chart-container" id="gage"></div>
-								<p class="highcharts-description"><font size="4">속도</font></p>
 							</figure>
 						</div>
 						
