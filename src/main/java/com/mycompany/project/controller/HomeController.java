@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +24,7 @@ import org.apache.commons.net.util.Base64;
 @RequestMapping("/home")
 public class HomeController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(HomeController.class);
+	
 	
 	@RequestMapping("/main.do")
 	public String main() {
@@ -46,12 +48,16 @@ public class HomeController {
 	public void captureDown(@RequestParam("img") String b64_string,
 							HttpServletResponse response) throws IOException {		
 //		LOGGER.info("실행");
-		
-		String saveDir = "C:/MyWorkspace/semiproject/capture_image/capture_" + new Date().getTime() + ".jpg";
+		String saveDir = "C:/MyWorkspace/semiproject/capture_image/";
+		String fileName = "capture_" + new Date().getTime() + ".jpg";
 		byte[] binary = Base64.decodeBase64(b64_string);
-		FileOutputStream fos = new FileOutputStream(saveDir);
+		FileOutputStream fos = new FileOutputStream(saveDir+fileName);
 		fos.write(binary, 0, binary.length);
 		fos.close();
+		
+		
+		
+		
 		
 		response.setContentType("application/json;charset=UTF-8");
 		JSONObject jsonObject = new JSONObject();

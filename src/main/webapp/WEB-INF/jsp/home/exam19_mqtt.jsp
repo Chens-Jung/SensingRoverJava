@@ -24,7 +24,8 @@
 		<script src="https://code.highcharts.com/modules/exporting.js"></script>
 		<script src="https://code.highcharts.com/modules/export-data.js"></script>
 		<script src="https://code.highcharts.com/modules/accessibility.js"></script>
-		
+
+		<link rel="stylesheet" href="${pageContext.request.contextPath}/resource/css/layout.css"/>
 		<link rel="stylesheet" href="${pageContext.request.contextPath}/resource/css/chartcss.css"/>
 		<script>
 			var data = {
@@ -58,9 +59,10 @@
 			}
 	
 			function onMessageArrived(message) {
-				/* console.log("실행");
-				console.log(message.payloadString); */
+				/* console.log("실행"); */
+				
 				if(message.destinationName == "/camerapub") {
+// 					console.log(message.payloadString);
 					var cameraView = $("#cameraView").attr("src", "data:image/jpg;base64," + message.payloadString);
 				}
 				if(message.destinationName == "/pwm") {
@@ -69,8 +71,8 @@
 				}
 				if(message.destinationName == "/sensor") {
 					
-					//console.log(message.payloadString)
-					document.getElementById("p").innerHTML = message.payloadString;
+// 					console.log(message.payloadString)
+// 					document.getElementById("p").innerHTML = message.payloadString;
 					var jsonObject = JSON.parse(message.payloadString);
 					document.getElementById("laser_state").innerHTML = "laser_state : " + jsonObject["laseremmiter_state"];
 					document.getElementById("buzzer_state").innerHTML = "buzzer_state : " + jsonObject["buzzer_state"];
@@ -436,13 +438,15 @@
 			
 			$(function(){var gaugeOptions = {
 			  chart: {
-			    type: 'solidgauge'
+			    type: 'solidgauge',
+			    height:180,
+		    	width:240
 			  },
 			
 			  title: null,
 			
 			  pane: {
-			    center: ['50%', '85%'],
+			    center: ['50%', '90%'],
 			    size: '140%',
 			    startAngle: -90,
 			    endAngle: 90,
@@ -544,62 +548,64 @@
 		</script>
 	</head>
 	<body>
-		<div class="bg_container">
-		    <div class="row">
-		    	<div class="col-sm-offset-0 col-sm-100%" id="section1_2">
-			    	<nav class="navbar navbar-inverse" role="navigation">
-		                <div class="navbar-header">
-		                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-		                        <span class="sr-only">Toggle navigation</span>
-		                        <span class="icon-bar"></span>
-		                        <span class="icon-bar"></span>
-		                        <span class="icon-bar"></span>
-		                    </button>
-		                    <a href="#" class="navbar-brand easysLogo">장치 제어</a>
-		                </div>
-		                <div class="collapse navbar-collapse navbar-ex1-collapse">
-		                    <ul class="nav navbar-nav">
-		                        <li><a href="#section4_1">센서 제어</a></li>
-		                        <li><a href="#section3_1">그래프</a></li>
-		                    </ul>
-		                </div>
-		            </nav>
-		        </div>
-		        
-			</div>
-			<div class="row">
-		        <div class="col-sm-offset-0 col-sm-100%" id="section1_1">
-			        <img id="cameraView"/>
-			        <br/>
-			        <p id="p"></p>
-		        </div>
-		    </div>
-
-		     <div class="row">
-		        <div class="col-sm-5" id="section2_1">
-			        <figure class="highcharts-figure" style="">
-					  <div id="container-speed" class="chart-container" id="gage"></div>
-					  <p class="highcharts-description">게이지</p>
-					</figure>
-		        </div>
-		        <div class="col-sm-3" id="section2_2">
-		        	<div id="motor_control" onkeydown="onkeydown_handler()" style="margin-left: 70%;">
-							<a class="btn btn-danger btn-sm" id="up" onmousedown="tire_button_down('up')" onmouseup="tire_button_up('up')">↑</a>
-							<a class="btn btn-danger btn-sm" id="down" onmousedown="tire_button_down('down')" onmouseup="tire_button_up('down')">↓</a>
-							<a class="btn btn-danger btn-sm" id="left" onmousedown="tire_button_down('left')" onmouseup="tire_button_up('left')">←</a>
-							<a class="btn btn-danger btn-sm" id="right" onmousedown="tire_button_down('right')" onmouseup="tire_button_up('right')">→</a>
-						<br/>
+		<div id="jb-container">
+			<div id="jb-content">
+				<div id="row_1" style="display:block;">
+					<div onkeydown="onkeydown_handler()" class="mainContent">
+				        <img id="cameraView"/>
+					</div>
+					<div onkeydown="onkeydown_handler()" class="mainContent" align="center">
 						<a class="btn btn-danger btn-sm" id="cameraup" onmousedown="camera_button_down('up')" onmouseup="camera_button_up('up')">카메라 위 W</a>
 						<a class="btn btn-danger btn-sm" id="cameradown" onmousedown="camera_button_down('down')" onmouseup="camera_button_up('down')" >카메라 아래 S</a>
 						<a class="btn btn-danger btn-sm" id="cameraleft" onmousedown="camera_button_down('left')" onmouseup="camera_button_up('left')" >카메라 왼쪽 A</a>
 						<a class="btn btn-danger btn-sm" id="cameraright" onmousedown="camera_button_down('right')" onmouseup="camera_button_up('right')" >카메라 오른쪽 D</a>
-						<br/>
+					</div>
+					<div onkeydown="onkeydown_handler()" class="mainContent">
 						<a class="btn btn-danger btn-sm" id="sonicleft" onmousedown="sonic_button_down('left')" onmouseup="sonic_button_up('left')" >거리센서 왼쪽</a>
 						<a class="btn btn-danger btn-sm" id="sonicright" onmousedown="sonic_button_down('right')" onmouseup="sonic_button_up('right')" >거리센서 오른쪽</a>
 					</div>
-		        </div>
-		        <div class="col-sm-2" id="section2_3">
-		        	<div id="backTire" align="center">
+				</div>
+				<div id="row_2" style="display:block;">
+					<div class="mainContent" align="center">
+						<h3>RGB LED</h3>
+						<h6 id="rgbLed_state">rgbLed_state : </h6>
+						<button onclick="rgbLed_red()">RED</button>
+						<button onclick="rgbLed_green()">GREEN</button>
+						<button onclick="rgbLed_blue()">BLUE</button>
+						<button onclick="rgbLed_off()">OFF</button>
+					</div>
+					<div class="mainContent" align="center">
+						<h3>buzzer</h3>
+						<h6 id="buzzer_state">buzzer_state : </h6>
+						<button onclick="buzzer_on()">ON</button>
+						<button onclick="buzzer_off()">OFF</button>
+					</div>
+					<div class="mainContent" align="center">
+						<h3>laser</h3>
+						<h6 id="laser_state">laser_state : </h6>
+						<button onclick="laser_on()">ON</button>
+						<button onclick="laser_off()">OFF</button>
+					</div>
+					<div class="mainContent" align="center">
+						<h3>LCD</h3>
+						lcd0:<input type="text" id="lcd0" size="25"/><br/>
+						lcd1:<input type="text" id="lcd1" size="25"/>
+						<a onclick="lcd_write()" class="btn btn-success">보내기</a>
+					</div>
+				</div>
+				<div id="row_3" style="display:block;">
+					<div class="mainContent">
+						<figure class="highcharts-figure">
+							<div id="container-speed" class="chart-container" id="gage"></div>
+						</figure>
+					</div>
+					<div class="mainContent" id="motor_control" onkeydown="onkeydown_handler()">
+						<a class="btn btn-danger btn-sm" id="up" onmousedown="tire_button_down('up')" onmouseup="tire_button_up('up')">↑</a>
+						<a class="btn btn-danger btn-sm" id="down" onmousedown="tire_button_down('down')" onmouseup="tire_button_up('down')">↓</a>
+						<a class="btn btn-danger btn-sm" id="left" onmousedown="tire_button_down('left')" onmouseup="tire_button_up('left')">←</a>
+						<a class="btn btn-danger btn-sm" id="right" onmousedown="tire_button_down('right')" onmouseup="tire_button_up('right')">→</a>
+					</div>
+					<div id="backTire" class="mainContent" align="center">
 						<h3>BackTire 장치 제어</h3>
 						<h6 id="backTire_state">현재 상태 : </h6>
 						<button onclick="backTire_control('forward')">전진</button>
@@ -609,63 +615,25 @@
 							<button onclick="backTire_control('0', '${i}')">${i}</button>
 						</c:forEach>
 					</div>
-		        </div>
-		    </div>
-
-		    <div class="row">
-		        <div class="col-sm-5" id="section3_1">
-		        	<figure class="highcharts-figure">
-					  <div id="gas" style="margin: 10%" ></div>
-					  <div id="thermistor" style="margin: 10%" ></div>
-					  <div id="photoresister" style="margin: 10%" ></div>
+				</div>
+				<div id="row_4" style="display:block;" align="left">
+					<figure class="highcharts-figure" style="float:left">
+						<div id="ultrasonic" style="margin: 10%;float: left;"></div>
 					</figure>
-		        </div>
-
-		        <div class="col-sm-5" id="section3_2">
-		       		<figure class="highcharts-figure">
-					  <div id="ultrasonic" style="margin: 10%" ></div>
-					  <div id="tracking" style="margin: 10%" ></div>
-					  <p class="highcharts-description">센서 차트</p>
+					<figure class="highcharts-figure" style="float:left">
+						<div id="tracking" style="margin: 10%;float: left;" ></div>
 					</figure>
-		        </div>
-		    </div>
-
-		    <div class="row">
-		        <div class="col-sm-2" id="section4_1">
-		        	<div id="rgbLed" align="center">
-						<h3>RGB LED</h3>
-						<h6 id="rgbLed_state">rgbLed_state : </h6>
-						<button onclick="rgbLed_red()">RED</button>
-						<button onclick="rgbLed_green()">GREEN</button>
-						<button onclick="rgbLed_blue()">BLUE</button>
-						<button onclick="rgbLed_off()">OFF</button>
-					</div>
-		        </div>
-		        <div class="col-sm-2" id="section4_2">
-		        	<div id="buzzer" align="center">
-						<h3>buzzer</h3>
-						<h6 id="buzzer_state">buzzer_state : </h6>
-						<button onclick="buzzer_on()">ON</button>
-						<button onclick="buzzer_off()">OFF</button>
-					</div>
-		        </div>
-		        <div class="col-sm-2" id="section4_3">
-		        	<div id="laser" align="center">
-						<h3>laser</h3>
-						<h6 id="laser_state">laser_state : </h6>
-						<button onclick="laser_on()">ON</button>
-						<button onclick="laser_off()">OFF</button>
-					</div>
-		        </div>
-		        <div class="col-sm-4" id="section4_4">
-		        	<div id="lcd" align="center">
-						<h3>LCD</h3>
-						lcd0:<input type="text" id="lcd0" size="25"/><br/>
-						lcd1:<input type="text" id="lcd1" size="25"/>
-						<a onclick="lcd_write()" class="btn btn-success">보내기</a>
-					</div>
-		        </div>
-		    </div>
+				</div>
+				
+				
+			</div>
+			<div id="jb-sidebar">
+				<figure class="highcharts-figure">
+					<div id="gas"></div>
+					<div id="thermistor"></div>
+					<div id="photoresister"></div>
+				</figure>
+			</div>
 		</div>
 		<script>
 			var chart1, chart2, chart3, chart4, chart5;
@@ -673,7 +641,9 @@
 			    chart1 = new Highcharts.Chart({
 			        chart: {
 			            renderTo: "gas",
-			            defaultSeriesType: 'spline'
+			            defaultSeriesType: 'spline',
+			            width: 600,
+			            height: 320
 			        },
 			        title: {
 			            text: 'Live Gas Data'
@@ -700,7 +670,9 @@
 			    chart2 = new Highcharts.Chart({
 			        chart: {
 			            renderTo: "thermistor",
-			            defaultSeriesType: 'spline'
+			            defaultSeriesType: 'spline',
+			            width: 600,
+			            height: 320
 			        },
 			        title: {
 			            text: 'Live Thermistor Data'
@@ -728,7 +700,9 @@
 			    chart3 = new Highcharts.Chart({
 			        chart: {
 			            renderTo: "photoresister",
-			            defaultSeriesType: 'spline'
+			            defaultSeriesType: 'spline',
+			            width: 600,
+			            height: 320
 			        },
 			        title: {
 			            text: 'Live Photoresister Data'
@@ -755,7 +729,9 @@
 			    chart4 = new Highcharts.Chart({
 			        chart: {
 			            renderTo: "ultrasonic",
-			            defaultSeriesType: 'spline'
+			            defaultSeriesType: 'spline',
+			            width: 600,
+			            height: 320
 			        },
 			        title: {
 			            text: 'Live Ultrasonic Data'
@@ -782,7 +758,10 @@
 			    chart5 = new Highcharts.Chart({
 			        chart: {
 			            renderTo: "tracking",
-			            defaultSeriesType: 'spline'
+			            defaultSeriesType: 'spline',
+			            width: 600,
+			            height: 320
+
 			        },
 			        title: {
 			            text: 'Live Tracking Data'
@@ -807,6 +786,14 @@
 			    });
 			}
 			makeChart(); //차트 불러오기
+			
+			jQuery(document).keydown(function(e){	//스크롤 방향키로 안움직이게 하기
+				if(e.target.nodeName != "INPUT" && e.target.nodeName != "TEXTAREA"){
+					if(e.keyCode === 37 || e.keyCode === 38 || e.keyCode === 39 || e.keyCode === 40){
+						return false;
+					}
+				}
+			});
 		</script>
 	</body>
 

@@ -52,7 +52,7 @@
 						<div class="col-sm-4" align="center">
 							<img id="cameraView" style="width: 100%; height: 85%;"/><br/>
 							<button class="btn btn-info" style="margin-top: 5px;" onclick="camera_capture()">capture</button>
-							<a href="" style="margin-top: 5px;" class="btn btn-info">captured list</a>
+							<a href="capturedlist.do" style="margin-top: 5px;" class="btn btn-info">captured list</a>
 						</div>
 						
 						<!-- ******** 카메라 제어 ********* -->
