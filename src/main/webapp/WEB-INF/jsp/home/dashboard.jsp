@@ -28,6 +28,8 @@
 		<link rel="stylesheet" href="${pageContext.request.contextPath}/resource/css/chartcss.css"/>
 		<script src="<%=application.getContextPath()%>/resource/themes/dark-unica.js"></script>
 		
+		<link rel="stylesheet" href="${pageContext.request.contextPath}/resource/css/style.css"/>
+		
 		<style>
 			body {
 				background: #384051;
