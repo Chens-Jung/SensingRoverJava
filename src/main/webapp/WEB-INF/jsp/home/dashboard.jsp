@@ -66,11 +66,27 @@
 				console.log("mqtt broker connected");
 				client.subscribe("/camerapub");
 				client.subscribe("/sensor");
+				client.subscribe("/capturepub");
 			}
 	
 			function onMessageArrived(message) {
 				/* console.log("실행");
 				console.log(message.payloadString); */
+				if(message.destinationName == "/capturepub") {
+					var b64_data = message.payloadString;
+// 					var b64_object = {
+// 							img: b64_data
+// 					};
+					$.ajax({
+						type:"POST",
+						url:"captureDown.do",
+						data:{img:b64_data},
+						success:function(data) {
+							window.alert("캡처파일 저장 " + data.result);
+						}
+					});
+					console.log("ajax");
+				}
 				if(message.destinationName == "/camerapub") {
 					var cameraView = $("#cameraView").attr("src", "data:image/jpg;base64," + message.payloadString);
 				}
@@ -88,6 +104,7 @@
 					document.getElementById("backTire_state").innerHTML = "현재상태 : " + jsonObject["dcMotor_state"];
 					document.getElementById("rgbLed_state").innerHTML = "rgbLed_state : " + jsonObject["rgbLed_state"];
 					document.getElementById("lcd_state").innerHTML = "현재 출력 : " + jsonObject["lcd_state"];
+						
 
 					data = jsonObject;
 					// console.log(data.dcMotor_speed);
@@ -597,6 +614,13 @@
 			  message.destinationName = "command/distance/right";
 			  client.send(message);
 			}
+			
+			function camera_capture() {
+				message = new Paho.MQTT.Message("capture")
+				message.destinationName = "command/camera/capture";
+				client.send(message);
+			}
+			
 			//게이지----------------
 			
 			$(function(){var gaugeOptions = {
@@ -714,7 +738,8 @@
 			<div class="col-sm-9" style="border:1px solid black">
 				<div class="row">
 					<div class="col-sm-4" align="center">
-						<img id="cameraView" style="width: 100%; height: 100%;"/>
+						<img id="cameraView" style="width: 100%; height: 100%;"/><br/>
+						<button class="btn btn-info" onclick="camera_capture()">capture</button>
 					</div>
 					
 					<div class="col-sm-4" style="border:1px solid black">
