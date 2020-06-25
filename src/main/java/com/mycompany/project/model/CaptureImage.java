@@ -4,6 +4,7 @@ public class CaptureImage {
 	private int cno;
 	private String cfilename;
 	private String ccontenttype;
+	private String cdate;
 	
 	public int getCno() {
 		return cno;
@@ -22,6 +23,12 @@ public class CaptureImage {
 	}
 	public void setCcontenttype(String ccontenttype) {
 		this.ccontenttype = ccontenttype;
+	}
+	public String getCdate() {
+		return cdate;
+	}
+	public void setCdate(String cdate) {
+		this.cdate = cdate;
 	}
 	
 	

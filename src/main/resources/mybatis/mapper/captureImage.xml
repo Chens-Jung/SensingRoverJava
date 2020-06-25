@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="captureImage">
-	<insert id="">
-		
+	<insert id="insertCaptureImage" parameterType="captureImage">
+		insert into camera(cfilename, ccontenttype, cdate) values(#{cfilename}, #{ccontenttype}, #{cdate});
 	</insert>
 	
-	<select id="">
-		select * from camera
+	<select id="selectAll" resultType="captureImage">
+		select * from camera;
+	</select>
+	
+	<select id="selectCaptureImage" resultType="captureImage">
+		select * from camera where cno=#{cno};
 	</select>
 </mapper>
