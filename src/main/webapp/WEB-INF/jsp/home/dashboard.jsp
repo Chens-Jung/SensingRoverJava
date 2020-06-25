@@ -110,7 +110,7 @@
 						<!-- ******** 타이어 컨트롤 ********* -->
 						<div class="col-sm-4" id="section2_3" style="border-right:1px solid black" align="center">
 							<p style="text-align: center"><font size="4">Tire Control</font></p>
-							<div id="motor_control">
+							<div id="tire_control">
 								<a class="btn btn-warning btn-lg" id="up" onmousedown="tire_button_down('up')" onmouseup="tire_button_up('up')" onclick="click_up()"
 								style="margin-bottom: 5px;">↑</a><br/>
 								<a class="btn btn-warning btn-lg" id="left" onmousedown="tire_button_down('left')" onmouseup="tire_button_up('left')" onclick="click_left()">←</a>

@@ -382,7 +382,7 @@ $(function() {
 			go = false;
 		});
 	});
-})
+});
 
 var go = false;
 function tire_control_touch(direction) {
